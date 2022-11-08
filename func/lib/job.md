@@ -11,8 +11,8 @@ job_cell
                         cell              //second link
                         cell              //third link
                         cell              //fourth link
-                int64                     //res
-        cell                              //address
+                int64                     //result
+        cell                              //address cell
                 cell                      //first address cell
                         address
                         address
@@ -27,27 +27,27 @@ job_cell
                 grams                     //value
                 slice                     //msg_body
         cell
-                cell    
-                        int               //status cell
-                        int 
-                        int
-                        int
-                        int
-                        int
-                cell                      //result
-                        int
-                        int
-                        int
-                        int
-                        int
+                cell                      //status cell
+                        int1               
+                        int1 
+                        int1
+                        int1
+                        int1
+                        int1
+                cell                      //result cell
+                        int64
+                        int64
+                        int64
+                        int64
+                        int64
 
 ```
 ``` 
 simple
-        int
-        int
-        int
-        int
+        int64
+        int64
+        int64
+        int1
         cell
                 cell
         cell                            //address
