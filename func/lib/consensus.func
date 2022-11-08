@@ -1,0 +1,79 @@
+{-
+        @title: consensus lib
+	@author Konstantin Klyuchnikov (knstntn.asuoki.eth)
+-}  
+
+int consensus::get_mean(tuple a) impure {
+        int value0 = a.first();
+        a = tuple::delete(a);
+        int value1 = a.first(); 
+        int value2 = a.second();
+        int value3 = a.third();
+        int value4 = a.fourth();
+        int da = abs(value0 - ((value1 + value2 + value3 + value4) / 4));
+        int db = abs(value1 - ((value0 + value2 + value3 + value4) / 4));
+        int dc = abs(value2 - ((value0 + value1 + value3 + value4) / 4));
+        int dd = abs(value3 - ((value0 + value1 + value2 + value4) / 4));
+        int de = abs(value4 - ((value0 + value1 + value2 + value3) / 4));
+
+        int min = math::get_min(unsafe_tuple([da, db, dc, dd, de]), 5);
+        if(da == min) { return value0; }
+        if(db == min) { return value1; }
+        if(dc == min) { return value2; }
+        if(dd == min) { return value3; }
+        return value4;
+}
+
+cell consensus::penalty(slice address, int value) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        var (_, key_addr) = parse_std_addr(address);
+        throw_unless(200, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice provider_slice = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = provider_slice~load_msg_addr();
+        int orig_status = provider_slice~load_uint(2);
+        int orig_time = provider_slice~load_uint(64);
+        int orig_balance = provider_slice~load_grams();
+        int orig_number = provider_slice~load_uint(64);
+        int orig_rep = provider_slice~load_uint(64);
+        int new_b = orig_balance - value;
+        int new_r = orig_rep - 2;
+        cell newProvider_cell = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(orig_status, 2)
+                .store_uint(orig_time, 64)
+                .store_grams(new_b)
+                .store_uint(orig_number, 64)
+                .store_uint(new_r, 64)
+        .end_cell();
+        return newProvider_cell;
+        {-provider_list~udict_set_ref(256, key_addr, newProvider_cell);
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();-}
+}
+
+cell consensus::reward(slice address, int value) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        var (_, key_addr) = parse_std_addr(address);
+        throw_unless(201, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice provider_slice = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = provider_slice~load_msg_addr();
+        int orig_status = provider_slice~load_uint(2);
+        int orig_time = provider_slice~load_uint(64);
+        int orig_balance = provider_slice~load_grams();
+        int orig_number = provider_slice~load_uint(64);
+        int orig_rep = provider_slice~load_uint(64);
+        int new_b = orig_balance + value;
+        int new_r = orig_rep + 2;
+        cell newProvider_cell = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(orig_status, 2)
+                .store_uint(orig_time, 64)
+                .store_grams(new_b)
+                .store_uint(orig_number, 64)
+                .store_uint(new_r, 64)
+        .end_cell();
+        return newProvider_cell;
+        {-provider_list~udict_set_ref(256, key_addr, newProvider_cell);
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();-}
+}

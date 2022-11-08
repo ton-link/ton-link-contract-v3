@@ -1,0 +1,23 @@
+slice test::create_msg(slice addres) {
+        cell body = begin_cell()
+                .store_grams(30000000000000)
+                .store_slice(addres)
+        .end_cell();
+        return (body.begin_parse());
+}
+
+() test::add_6_provider(slice sender_address, slice owner) impure {
+        slice a1 = "EQCOVDc-qYB-SGwQycbn7M1gpFXrWGh1wUCfSQFfLdh8Fspk"a;
+        slice a2 = "EQCxYL2qbCUKdlUUN72WbjOHv5pzKHweQTyHbUGKBTjdFFKS"a;
+        slice a3 = "EQC2wXAFw8sGhIikoz3znfFkkBjBhyTiynXj5wt9lp9gBTfU"a;
+        slice a4 = "EQBdbleQ-2MA7BZF8O_1mihFLYyVRV-iP6ZJnFB-TISz3JiM"a;
+        slice a5 = "EQBt4O7ksppyuZIOfUJpY12ou14K5zuMWzudcY_jIohUPdwz"a;
+        slice a6 = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        reg::add(test::create_msg(a1));
+        reg::add(test::create_msg(a2));
+        reg::add(test::create_msg(a3));
+        reg::add(test::create_msg(a4));
+        reg::add(test::create_msg(a5));
+        reg::add(test::create_msg(a6));
+        return ();
+}

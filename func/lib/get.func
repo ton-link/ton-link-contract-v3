@@ -1,0 +1,72 @@
+cell get_job_by_jobid(int jobID) method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        cell job = job_list.udict_get_maybe_ref(64, jobID);
+        return job;
+}
+
+cell get_info_about_provider(slice address) method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        var (_, key_addr) = parse_std_addr(address);
+        cell provider = provider_list.udict_get_maybe_ref(256, key_addr);
+        return provider;
+}
+
+int get_last_job() method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        return last_job_id;
+}
+
+cell get_active_job_by_jobid(int jobID) method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        cell job = active_jobId.udict_get_maybe_ref(64, jobID);
+        return job;
+}
+
+int get_max_provider() method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        return max_provider;
+}
+
+slice get_tlink_wallet() method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        return jettonWallet;
+}
+
+slice get_tlink_minter() method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        return jettonMinter;
+}
+
+int check_for_ownership(slice address, int jobID) method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        job~load_ref();
+        cell addressCell = job~load_ref();
+        slice addressSlice = addressCell.begin_parse();
+        slice addressSlice1 = (addressSlice~load_ref()).begin_parse();
+        repeat(3){
+                slice temp = addressSlice1~load_msg_addr();
+                if(equal_slices(address, temp)){ return (-1); }
+        }
+        slice addressSlice2 = (addressSlice~load_ref()).begin_parse();
+        repeat(2){
+                slice temp = addressSlice2~load_msg_addr();
+                if(equal_slices(address, temp)){ return (-1); }
+        }
+        return (0);
+}
+
+cell get_link_by_jobID(int jobID) method_id {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        slice content = (job~load_ref()).begin_parse();
+        return (content~load_ref());
+}

@@ -1,0 +1,117 @@
+int __test_new_registration(){
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        var body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(40, 64)
+                .store_grams(30000000000000)
+                .store_slice(my)
+        .end_cell();
+        var msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas_used, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        var (_, stack) = invoke_method(get_info_about_provider, [my]);
+        var (_, stack1) = invoke_method(get_max_provider, []);
+        [int res] = stack1;
+        throw_unless(0, 1 == res);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(my, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+        return gas_used;
+}
+
+int __test_pause_registration(){
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        var body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(40, 64)
+                .store_grams(30000000000000)
+                .store_slice(my)
+        .end_cell();
+        var msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (_, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        var body = begin_cell()
+                .store_uint(op::reg::pause(), 32)
+                .store_uint(0, 64)
+        .end_cell();
+        var msg = begin_cell()
+                .store_uint(1, 4)
+                .store_slice(my)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas_used, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        var (_, stack) = invoke_method(get_info_about_provider, [my]);
+        var (_, stack1) = invoke_method(get_max_provider, []);
+        [int res] = stack1;
+        throw_unless(0, 1 == res);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(my, prov_slice~load_msg_addr()));
+        throw_unless(2, (1 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+        return gas_used;
+}
+
+int __test_delete_registration(){
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        var body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(40, 64)
+                .store_grams(30000000000000)
+                .store_slice(my)
+        .end_cell();
+        var msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (_, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        var body = begin_cell()
+                .store_uint(op::reg::delete(), 32)
+                .store_uint(0, 64)
+        .end_cell();
+        var msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(my)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas_used, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        var (_, stack) = invoke_method(get_info_about_provider, [my]);
+        var (_, stack1) = invoke_method(get_max_provider, []);
+        [int res] = stack1;
+        throw_unless(0, 1 == res);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(my, prov_slice~load_msg_addr()));
+        throw_unless(2, (2 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (0 == (prov_slice~load_grams())));
+        return gas_used;
+}

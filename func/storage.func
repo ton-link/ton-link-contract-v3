@@ -1,0 +1,20 @@
+(slice, slice, slice, int, int, cell, cell, cell, cell) storage::load_data() inline {
+        slice ds = get_data().begin_parse();
+        return (ds~load_msg_addr(), ds~load_msg_addr(), ds~load_msg_addr(), ds~load_uint(64), ds~load_uint(64), ds~load_dict(), ds~load_dict(), ds~load_dict(), ds~load_dict());
+}
+
+() storage::save_data(slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) impure inline {
+        set_data(
+                begin_cell()
+                        .store_slice(jettonWallet)
+                        .store_slice(jettonMinter)
+                        .store_slice(admin)
+                        .store_uint(max_provider, 64)
+                        .store_uint(last_job_id, 64)
+                        .store_dict(provider_list)
+                        .store_dict(job_list)
+                        .store_dict(active_jobId)
+                        .store_dict(provider_list_for_choising)
+                .end_cell()
+        );
+}

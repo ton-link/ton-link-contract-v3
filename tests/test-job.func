@@ -1,0 +1,497 @@
+int __add_5_provider(){
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBtLkVjtuwfDYP__ukRMDbZABq7_fqUIutakoAhnod_GI2b"a; 
+        int a = 0;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        a = a + gas;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        a = a + gas;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        a = a + gas;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        a = a + gas;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+        a = a + gas;
+        return a;
+}
+
+() test_job(){
+        init_data::set_default_initial_data();
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBtLkVjtuwfDYP__ukRMDbZABq7_fqUIutakoAhnod_GI2b"a;
+
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr0]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr0, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr1]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr1, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr2]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr2, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr3]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr3, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr4]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr4, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        {-
+        var content = begin_cell().store_slice("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD").end_cell();
+        var msg = begin_cell().store_uint(0, 32).store_slice(my).end_cell();
+        var new_job = begin_cell()
+                .store_uint(1, 64)
+                .store_uint(now(), 64)
+                .store_uint(now() + 90, 64)
+                .store_uint(0, 1)
+                .store_ref(content)
+                .store_ref(begin_cell()
+                        .store_ref(begin_cell()
+                                .store_slice(addr0)
+                                .store_slice(addr1)
+                                .store_slice(addr2)
+                        .end_cell())
+                        .store_ref(begin_cell()
+                                .store_slice(addr3)
+                                .store_slice(addr4)
+                        .end_cell())
+                .end_cell())
+                .store_ref(begin_cell()
+                        .store_slice(my)
+                        .store_uint(now(), 64)
+                        .store_grams(60000000000)
+                        .store_ref(msg)
+                .end_cell())
+                .store_ref(begin_cell()
+                        .store_ref(begin_cell()
+                                .store_uint(0, 1)
+                                .store_uint(0, 1)
+                                .store_uint(0, 1)
+                                .store_uint(0, 1)
+                                .store_uint(0, 1)
+                        .end_cell())
+                        .store_ref(begin_cell()
+                                .store_uint(0, 64)
+                                .store_uint(0, 64)
+                                .store_uint(0, 64)
+                                .store_uint(0, 64)
+                                .store_uint(0, 64)
+                        .end_cell())
+                .end_cell())
+        .end_cell();
+        -}
+}
+
+int __test_add_new_job(){
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBYTuYbLf8INxFtD8tQeNk5ZLy-nAX9ahQbG_yl1qQ-GEMS"a; 
+        slice addr5 = "EQD19L6QzsNsU18lwEZVD0UixFLklun85Bsxnty-dMXcntva"a;
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr5)]);
+        cell link = begin_cell()
+                .store_ref(begin_cell().store_uint(0, 32).store_slice(my).end_cell())
+                .store_ref(begin_cell().store_slice("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD").end_cell())
+        .end_cell();
+        cell body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(50, 64)
+                .store_grams(60000000000)
+                .store_slice(my)
+                .store_slice(link.begin_parse())
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        {-
+        var (_, stack1) = invoke_method(get_last_job, []);
+        var (_, stack) = invoke_method(get_job_by_jobid, [1]);
+        [cell job] = stack;
+        slice j = job.begin_parse();
+        j~load_uint(64);
+        j~load_uint(64);
+        j~load_uint(64);
+        j~load_uint(1);
+        j~load_ref();
+        slice add = (j~load_ref()).begin_parse();
+        slice add1 = (add~load_ref()).begin_parse();
+        slice status_res = (j~load_ref()).begin_parse();
+        slice status_s = (status_res~load_ref()).begin_parse();
+        slice res_s = (status_res~load_ref()).begin_parse();
+        repeat(5){
+                ~dump(status_s~load_uint(1));
+        }
+        repeat(5){
+                ~dump(res_s~load_uint(64));
+        }-}
+        {-~dump(addr3);
+        repeat(3){
+                ~dump(add1~load_msg_addr());
+        }
+        slice add2 = (add~load_ref()).begin_parse();
+        repeat(2){
+                ~dump(add2~load_msg_addr());
+        }-}
+        {-slice msg = (j~load_ref()).begin_parse();
+        ~dump(msg~load_msg_addr());
+        ~dump(msg~load_uint(64));
+        ~dump(msg~load_grams());
+        ~dump(msg~load_ref());
+        -}
+        return gas;
+}
+
+int __test_add_result(){
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBYTuYbLf8INxFtD8tQeNk5ZLy-nAX9ahQbG_yl1qQ-GEMS"a;
+        slice addr5 = "EQD19L6QzsNsU18lwEZVD0UixFLklun85Bsxnty-dMXcntva"a; 
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr5)]);
+        var (_, stack1) = invoke_method(get_max_provider, []);
+        [int res] = stack1;
+
+        cell link = begin_cell()
+                .store_ref(begin_cell().store_uint(0, 32).store_slice(my).end_cell())
+                .store_ref(begin_cell().store_slice("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD").end_cell())
+        .end_cell();
+        cell body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(50, 64)
+                .store_grams(60000000000)
+                .store_slice(my)
+                .store_slice(link.begin_parse())
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+
+        var body = begin_cell()
+                .store_uint(160, 32)
+                .store_uint(0, 64)
+                .store_uint(1, 64)
+                .store_uint(1284610000000, 64)
+        .end_cell();
+
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(addr0)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        {-
+        var (_, stack) = invoke_method(get_job_by_jobid, [1]);
+        [cell job] = stack;
+        slice j = job.begin_parse();
+        j~load_uint(64);
+        j~load_uint(64);
+        j~load_uint(64);
+        j~load_uint(1);
+        j~load_ref();
+        slice add = (j~load_ref()).begin_parse();
+        slice add1 = (add~load_ref()).begin_parse();
+        slice status_res = (j~load_ref()).begin_parse();
+        slice status_s = (status_res~load_ref()).begin_parse();
+        ;;slice res_s = (status_res~load_ref()).begin_parse();
+        repeat(5){
+                ~dump(res_s~load_uint(64));
+        }-}
+        return gas;
+}
+
+int __test_complete() {
+        init_data::set_default_initial_data();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBYTuYbLf8INxFtD8tQeNk5ZLy-nAX9ahQbG_yl1qQ-GEMS"a; 
+        slice addr5 = "EQD19L6QzsNsU18lwEZVD0UixFLklun85Bsxnty-dMXcntva"a;
+        slice addr6 = "EQDqCSDXBA6nDLCZIJbNwxgGH3_i6PuS3SRiEX80PN1WmQrx"a;
+        slice addr7 = "EQC7lHM-Y4wQU0S7bmN1Frz3gwOz3U6MIFeB54OyCBRttrmT"a;
+        slice addr8 = "EQBSZ9XSSN7a0imz_13fIsxM8XZ8n1EnvjtSAfdsvGdtHIuS"a;
+        slice addr9 = "EQDInGPKLw3mtanwWBBOW_B_vxh7LMIB5DBGQM79ikVJTILq"a; 
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr5)]);
+        {-var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr6)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr7)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr8)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr9)]);-}
+        var (_, stack1) = invoke_method(get_max_provider, []);
+        [int res] = stack1;
+
+        cell link = begin_cell()
+                .store_ref(begin_cell().store_uint(0, 32).store_slice(my).end_cell())
+                .store_ref(begin_cell().store_slice("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD").end_cell())
+        .end_cell();
+        cell body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(50, 64)
+                .store_grams(60000000000)
+                .store_slice(my)
+                .store_slice(link.begin_parse())
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+
+        var (_, last_job) = invoke_method(get_last_job, []);
+        [int last_job_id] = last_job;        
+
+        var (_, stack) = invoke_method(check_for_ownership, [addr0, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job_wrong(addr0)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr1, last_job_id]);
+        [int res] = stack;  
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr1)]);
+        } 
+        var (_, stack) = invoke_method(check_for_ownership, [addr2, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr2)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr3, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr3)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr4, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr4)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr5, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr5)]);
+        }
+        {-
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr6)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr7)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr8)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr9)]);-}
+
+        {-var (_, stack) = invoke_method(get_info_about_provider, [addr0]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        ~dump(prov_slice~load_msg_addr());
+        ~dump(prov_slice~load_uint(2));
+        prov_slice~load_uint(64);
+        ~dump(prov_slice~load_grams());
+        prov_slice~load_uint(64);
+        ~dump(prov_slice~load_uint(64));
+        -}
+        return gas;
+}
+
+int __test_10_provider(){
+        init_data::set_default_initial_data();
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        randomize_lt();
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice my = "EQB1BIFXrHRZL_SwW1dSaQ-6Gj51dGINydHgli0kJLdfIeYB"a;
+        slice addr0 = "EQDLgrBDNia2xiEKgaKJVPrMTWOIwZl9d7IbPG9KEFebfPkR"a;
+        slice addr1 = "EQAroJ6JJbPVuZHDgGn6a8HXbFaY_eR22rZzVdLpdnn0Ts3m"a;
+        slice addr2 = "EQDv4LGhsjOGRNKPlj_80xR-cp_JxB0lRXez43m9LSE5LDuH"a;
+        slice addr3 = "EQB6xI6_FZ82tAgteoBuG7gSncizMpAOQuV7cA0OTibN-i4l"a;
+        slice addr4 = "EQBYTuYbLf8INxFtD8tQeNk5ZLy-nAX9ahQbG_yl1qQ-GEMS"a; 
+        slice addr5 = "EQD19L6QzsNsU18lwEZVD0UixFLklun85Bsxnty-dMXcntva"a;
+        slice addr6 = "EQDqCSDXBA6nDLCZIJbNwxgGH3_i6PuS3SRiEX80PN1WmQrx"a;
+        slice addr7 = "EQC7lHM-Y4wQU0S7bmN1Frz3gwOz3U6MIFeB54OyCBRttrmT"a;
+        slice addr8 = "EQBSZ9XSSN7a0imz_13fIsxM8XZ8n1EnvjtSAfdsvGdtHIuS"a;
+        slice addr9 = "EQDInGPKLw3mtanwWBBOW_B_vxh7LMIB5DBGQM79ikVJTILq"a; 
+        slice addr10 = "EQCtiv7PrMJImWiF2L5oJCgPnzp-VML2CAt5cbn1VsKAxLiE"a; 
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr0)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr1)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr2)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr3)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr4)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr5)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr6)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr7)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr8)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr9)]);
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, create_prov(addr10)]);
+
+        var (_, stack) = invoke_method(get_info_about_provider, [addr9]);
+        [cell prov] = stack;
+        slice prov_slice = prov.begin_parse();
+        throw_unless(1, equal_slices(addr9, prov_slice~load_msg_addr()));
+        throw_unless(2, (0 == (prov_slice~load_uint(2))));
+        prov_slice~load_uint(64);
+        throw_unless(3, (30000000000000 == (prov_slice~load_grams())));
+
+        cell link = begin_cell()
+                .store_ref(begin_cell().store_uint(0, 32).store_slice(my).end_cell())
+                .store_ref(begin_cell().store_slice("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD").end_cell())
+        .end_cell();
+        cell body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(50, 64)
+                .store_grams(60000000000)
+                .store_slice(my)
+                .store_slice(link.begin_parse())
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        var (gas, _) = invoke_method(recv_internal, [10000, 0, msg, body.begin_parse()]);
+        
+        var (_, last_job) = invoke_method(get_last_job, []);
+        [int last_job_id] = last_job;
+
+        var (_, stack) = invoke_method(check_for_ownership, [addr0, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr0)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr1, last_job_id]);
+        [int res] = stack;  
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr1)]);
+        } 
+        var (_, stack) = invoke_method(check_for_ownership, [addr2, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr2)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr3, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr3)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr4, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr4)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr5, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr5)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr6, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr6)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr7, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr7)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr8, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr8)]);
+        }
+        var (_, stack) = invoke_method(check_for_ownership, [addr9, last_job_id]);
+        [int res] = stack;
+        if(res) {
+                var (gas, _) = invoke_method(recv_internal, [10000, 0, create_add_job(addr9)]);
+        }
+        return gas;
+}

@@ -1,0 +1,13 @@
+() admin::change_jettonWallet(slice msg, slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(500, equal_slices(sender_address, admin));
+        slice address = msg~load_msg_addr();
+        storage::save_data(address, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+}
+
+() admin::change_jettonMinter(slice msg, slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(500, equal_slices(sender_address, admin));
+        slice address = msg~load_msg_addr();
+        storage::save_data(jettonWallet, address, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+}

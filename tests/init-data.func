@@ -1,0 +1,18 @@
+() init_data::set_default_initial_data() impure {
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        slice minter = "EQB3zt_w3eJPH_G_wh1vMz3uBMhfxrUc1BgXOI30dr76KAch"a;
+        slice my = "EQBIn1xl9KARNGCyRJpmP--xFsd0nkEoTI5yvU4FR79slo4K"a;
+        set_data(
+                begin_cell()
+                        .store_slice(wallet)
+                        .store_slice(minter)
+                        .store_slice(my)
+                        .store_uint(0, 64)
+                        .store_uint(0, 64)
+                        .store_dict(new_dict())
+                        .store_dict(new_dict())
+                        .store_dict(new_dict())
+                        .store_dict(new_dict())
+                .end_cell()
+        );
+}

@@ -1,0 +1,4 @@
+#include "init-data.func";
+#include "provider.func";
+#include "test-job.func";
+#include "test-registration.func";

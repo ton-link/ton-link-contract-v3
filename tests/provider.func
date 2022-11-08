@@ -1,0 +1,54 @@
+(cell, slice) create_prov(slice address) {
+        slice wallet = "EQB_m-Vtz30EEaVSBB30GeJmrO-F4huVeGraUCD0KMjikXNw"a;
+        cell body = begin_cell()
+                .store_uint(op::transfer_notification(), 32)
+                .store_uint(40, 64)
+                .store_grams(30000000000000)
+                .store_slice(address)
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(wallet)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        return (msg, body.begin_parse());
+}
+
+(cell, slice) create_add_job(slice address) {
+         var body = begin_cell()
+                .store_uint(160, 32)
+                .store_uint(0, 64)
+                .store_uint(1, 64)
+                .store_uint(1284610000000, 64)
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(address)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        return (msg, body.begin_parse());
+}
+
+(cell, slice) create_add_job_wrong(slice address) {
+         var body = begin_cell()
+                .store_uint(160, 32)
+                .store_uint(0, 64)
+                .store_uint(1, 64)
+                .store_uint(18812992, 64)
+        .end_cell();
+        cell msg = begin_cell()
+                .store_uint(1, 4) ;; we should not bounce here cause receiver can have uninitialized contract
+                .store_slice(address)
+                .store_coins(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(body.begin_parse())
+        .end_cell();
+        return (msg, body.begin_parse());
+}
