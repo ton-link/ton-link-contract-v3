@@ -12,8 +12,8 @@ tuple tuple::delete(tuple a) impure {
 
 int tuple::get_random_number(int max) impure {
         randomize_lt();
-        int temp = rand(max);
-        return temp;
+        ;;int temp = rand(max);
+        return rand(max);
 }
 
 int tuple::get_by_count(tuple a, int count) impure {
@@ -25,13 +25,12 @@ int tuple::get_by_count(tuple a, int count) impure {
         return res;
 }
 
-tuple tuple::replace(tuple a, int count, int new) impure {
+tuple tuple::replace(tuple a, int count, int new) {
         tuple temp_tuple = unsafe_tuple([]);
         repeat(a.tuple_length() - (count + 1)){
                 temp_tuple = temp_tuple.tpush(a~tpop());
         }
-        tuple result_tuple = unsafe_tuple([]);
-        int trash = a~tpop();
+        a~tpop();
         a = a.tpush(new);
         repeat(temp_tuple.tuple_length()){
                a = a.tpush(temp_tuple~tpop()); 
@@ -52,24 +51,7 @@ int tuple::in_tuple(tuple a, int n, int length) impure {
         return 0;
 }
 
-tuple tuple::match_check(tuple a, int max) impure {
-        {-int i = 0;
-        while(i != 5){
-                int j = i + 1;
-                while(j != 5){
-                        if((tuple::get_by_count(a, i)) == (tuple::get_by_count(a, j))){
-                                int new = tuple::get_by_count(a, i);
-                                while((tuple::get_by_count(a, i)) == new){
-                                        new = tuple::get_random_number(max);
-                                }
-                                a = tuple::replace(a, j, new);
-                        }
-                        j = j + 1;
-                }
-                i = i + 1;
-        }
-        return a;-}
-
+tuple tuple::match_check(tuple a, int max) { ;; old - 0.3 TON
         int i = 0;
         repeat(a.tuple_length()){
                 int temp = tuple::get_by_count(a, i);
@@ -86,5 +68,62 @@ tuple tuple::match_check(tuple a, int max) impure {
                 }
         }
         return a;
+
+}
+
+tuple tuple::generation_rand_array(int max) { ;; maybe new - probably 0.03 TON
+        tuple result_tuple = unsafe_tuple([]);
+        int a = 0;
+        while(result_tuple.tuple_length() < 5){
+                a = tuple::get_random_number(max);
+                do {
+                        int unic = -1;
+                        
+                        int i = 0;
+                        repeat(result_tuple.tuple_length()){
+                                int temp = tuple::get_by_count(result_tuple, i);
+                                if(a == temp){
+                                        unic = 0;
+                                        ;;break;
+                                }
+                                i += 1;
+                        }
+
+                } until (unic == 0); 
+                result_tuple = result_tuple.tpush(a);
+        }
+        return result_tuple;
+}
+
+tuple tuple::test_gen_rand_tuple(int max) { ;; main - 0.07 TON
+        tuple result_tuple = unsafe_tuple([0, 0, 0, 0, 0]);
+        int i = 0;
+        int j = 0;
+        int m = 0;
+        int check = 1;
+        repeat(5){
+                if(i == 0) {
+                        int temp = tuple::get_random_number(max);
+                        result_tuple = tuple::replace(result_tuple, i, temp);
+                } else {
+                        while(check != 0) {
+                                m = tuple::get_random_number(max);
+                                while(j < i) {
+                                        if(m == tuple::get_by_count(result_tuple, j)) {
+                                                j = i; 
+                                                check = 1;
+                                        } else {
+                                                check = 0;
+                                        }
+                                        j += 1;
+                                }
+                                j = 0;
+                        }
+                        result_tuple =  tuple::replace(result_tuple, i, m);
+                }
+                check = 1;
+                i += 1;
+        }
+        return result_tuple;
 
 }
