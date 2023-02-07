@@ -1,0 +1,34 @@
+{
+  "name": "ton-link-contract-v3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'",
+    "build": "./scripts/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ton-link/ton-link-contract-v3.git"
+  },
+  "author": "Konstantin Klyuchnikov (0xknstntn.eth)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ton-link/ton-link-contract-v3/issues"
+  },
+  "homepage": "https://github.com/ton-link/ton-link-contract-v3#readme",
+  "dependencies": {
+    "@ton-community/sandbox": "^0.2.2",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "ton-compiler": "^2.2.0",
+    "ton-contract-executor": "^0.6.2",
+    "ton-core": "^0.47.0",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "typescript": "^4.9.5"
+  }
+}
