@@ -15,7 +15,7 @@
 #include "lib/job.func";
 #include "lib/registration.func";
 #include "lib/admin.func";
-#include "lib/test.func";
+;;#include "lib/test.func";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
         (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
