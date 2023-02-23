@@ -84,6 +84,7 @@ describe("ton-link-v3 tests", async () => {
                         tonlinkContractForError = blockchainForErr.openContract(tonlink);
                         await tonlinkContractForError.sendDeploy(deployerForErr.getSender());
                 });
+
                 it("[ERROR - 99 exitcode] registration", async () => {
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
@@ -96,6 +97,7 @@ describe("ton-link-v3 tests", async () => {
                         expect(res.exitCode).to.equal(99)
                         expect(res.aborted).to.equal(true)
                 });
+
                 it("[ERROR - 100 exitcode] registration", async () => {
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
@@ -154,6 +156,8 @@ describe("ton-link-v3 tests", async () => {
                                 .storeUint(0, 64)
                         .endCell()
                         var result = await tonlinkContractForError.sendAction(val2ForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(150, 32)
                                 .storeUint(0, 64)
@@ -162,6 +166,30 @@ describe("ton-link-v3 tests", async () => {
                         var res = flattenTransaction(result.transactions[1]);
                         expect(res.exitCode).to.equal(103)
                 });
+                
+                it ("Unpause + delete",async () => {
+                        var body = beginCell()
+                                .storeUint(130, 32)
+                                .storeUint(0, 64)
+                        .endCell()
+                        var result = await tonlinkContractForError.sendAction(val2ForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
+
+                        var body = beginCell()
+                                .storeUint(150, 32)
+                                .storeUint(0, 64)
+                        .endCell()
+                        var result = await tonlinkContractForError.sendAction(val2ForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
+
+                        var validatorCell = await tonlinkContractForError.get_info_about_provider(val2ForErr.address);
+                        var resSlice = validatorCell.beginParse()
+                        resSlice.loadAddress()
+                        expect(resSlice.loadUint(2)).to.equal(2)
+                })
+                
 
                 it("Registration all validators", async () => {
                         var body = beginCell()
@@ -170,49 +198,63 @@ describe("ton-link-v3 tests", async () => {
                                 .storeCoins(30000000000000)
                                 .storeAddress(val2ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val3ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val4ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val5ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val6ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val7ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
                                 .storeUint(40, 64)
                                 .storeCoins(30000000000000)
                                 .storeAddress(val8ForErr.address)
                         .endCell()
-                        var res = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var result = await tonlinkContractForError.sendAction(walletForErr.getSender(), body);
+                        var res = flattenTransaction(result.transactions[1]);
+                        expect(res.exitCode).to.equal(0)
                         const value = await tonlinkContractForError.get_max_provider();
                         expect(value).to.equal(8n);
                 });
@@ -257,7 +299,9 @@ describe("ton-link-v3 tests", async () => {
                         var res = flattenTransaction(result.transactions[1]);
                         expect(res.exitCode).to.equal(0)
                         expect(res.aborted).to.equal(false)
+
                 });
+
                 let validatorArray: string[] = [];
                 it("Get validator array from first job", async () => {
                         const res = await tonlinkContractForError.get_job_by_jobid(1);
@@ -459,6 +503,8 @@ describe("ton-link-v3 tests", async () => {
                         }
                 });
         });
+
+        
         
         describe("ton-link-v3 registration tests", async () => {
                 it("Registration of 1 validator", async () => {

@@ -51,9 +51,6 @@ PROGRAM{
   DECLPROC reg::unpause
   DECLPROC admin::change_jettonWallet
   DECLPROC admin::change_jettonMinter
-  DECLPROC test::create_msg
-  DECLPROC test::add_6_provider
-  DECLPROC test::opt
   DECLPROC recv_internal
   storage::load_data PROCINLINE:<{
     c4 PUSH
@@ -1679,48 +1676,87 @@ PROGRAM{
     DUP
     REWRITESTDADDR
     NIP
-    s0 s5 PUSH2
+    0 PUSHINT
+    s1 s6 PUSH2
     8 PUSHPOW2
     DICTUGETOPTREF
     <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
-    100 THROWIF
+    IF:<{
+      DROP
+      s0 s5 PUSH2
+      8 PUSHPOW2
+      DICTUGETOPTREF
+      CTOS
+      LDMSGADDR
+      NIP
+      2 LDU
+      SWAP
+      2 NEQINT
+      IF:<{
+        s1 s6 PUSH2
+        8 PUSHPOW2
+        DICTUGETOPTREF
+        <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+        100 THROWIF
+      }>
+      64 LDU
+      NIP
+      LDGRAMS
+      NIP
+      64 LDU
+      DROP
+    }>
+    DUP
+    0 EQINT
+    IF:<{
+      DROP
+      s7 PUSH
+    }>
     1000 PUSHINT
     NOW
     0 PUSHINT
     NEWC
-    s5 PUSH
+    s6 PUSH
     STSLICER
     2 STU
     64 STU
-    s0 s4 XCHG2
+    s0 s5 XCHG2
     STGRAMS
-    s8 s(-1) PUXC
+    s1 s(-1) PUXC
     64 STU
-    s1 s3 XCHG
+    s1 s4 XCHG
     64 STU
     ENDC
-    s0 s0 s5 XCHG3
+    s0 s1 s6 XCHG3
     8 PUSHPOW2
     DICTUSETREF
     0 PUSHINT
     NEWC
     2 STU
-    s0 s4 XCHG2
+    s0 s5 XCHG2
     STSLICER
-    s5 s(-1) PUXC
+    s1 s(-1) PUXC
     64 STU
     ENDC
-    s0 s5 s9 XCPUXC
+    s0 s0 s10 XCPUXC
     64 PUSHINT
     DICTUSETREF
-    s0 s4 XCHG
-    INC
-    s7 s8 XCHG
-    s6 s7 XCHG
-    s0 s5 XCHG
-    s0 s6 XCHG
-    4 ROLL
-    storage::save_data INLINECALLDICT
+    s9 s5 XCPU
+    NEQ
+    IF:<{
+      8 ROLL
+      storage::save_data INLINECALLDICT
+    }>ELSE<{
+      s0 s4 XCHG
+      INC
+      s7 s8 XCHG
+      s6 s7 XCHG
+      s0 s5 XCHG
+      s0 s6 XCHG
+      s3 s4 XCHG
+      s1 s3 s0 XCHG3
+      storage::save_data INLINECALLDICT
+    }>
   }>
   reg::pause PROC:<{
     storage::load_data INLINECALLDICT
@@ -1932,47 +1968,6 @@ PROGRAM{
     s3 s5 XCHG
     s4 s0 s3 XCHG3
     storage::save_data INLINECALLDICT
-  }>
-  test::create_msg PROC:<{
-    NEWC
-    30000000000000 PUSHINT
-    STGRAMS
-    SWAP
-    STSLICER
-    ENDC
-    CTOS
-  }>
-  test::add_6_provider PROC:<{
-    2DROP
-    x{8011CA86E7D5300FC90D821938DCFD99AC148ABD6B0D0EB82813E9202BE5BB0F82D_} PUSHSLICE
-    x{80162C17B54D84A14ECAA286F7B2CDC670F7F34E650F83C82790EDA83140A71BA29_} PUSHSLICE
-    x{8016D82E00B87960D091149467BE73BE2C92031830E49C594EBC7CE16FB2D3EC00B_} PUSHSLICE
-    x{800BADCAF21F6C601D82C8BE1DFEB34508A5B192A8ABF447F4C9338A0FC990967B9_} PUSHSLICE
-    x{800DBC1DDC96534E573241CFA84D2C6BB5176BC15CE7718B6773AE31FC64510A87B_} PUSHSLICE
-    x{800EA0902AF58E8B25FE960B6AEA4D21F74347CEAE8C41B93A3C12C5A48496EBE43_} PUSHSLICE
-    s0 s5 XCHG
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-    s0 s3 XCHG
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-    SWAP
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-    test::create_msg CALLDICT
-    reg::add CALLDICT
-  }>
-  test::opt PROC:<{
-    storage::load_data INLINECALLDICT
-    s5 s8 XCHG
-    8 BLKDROP
-    tuple::test_gen_rand_tuple CALLDICT
-    s0 DUMP
-    DROP
   }>
   recv_internal PROC:<{
     2 2 BLKDROP2

@@ -9,13 +9,30 @@
         slice from_address = msg~load_msg_addr();
         throw_unless(99, input_amount == 30000000000000);
         var (_, key_addr) = parse_std_addr(from_address);
-        throw_if(100, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        int tempMaxProvider = 0;
+        if(check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr))){
+                slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+                slice orig_address = newRegistration_old~load_msg_addr();
+                int status = newRegistration_old~load_uint(2);
+                if(status != 2) {
+                        throw_if(100, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+                }
+                newRegistration_old~load_uint(64);
+                newRegistration_old~load_grams();
+                int orig_number_provider = newRegistration_old~load_uint(64);
+                tempMaxProvider = orig_number_provider;
+        }
+
+        if(tempMaxProvider == 0) {
+                tempMaxProvider = max_provider;
+        }
+
         cell newRegistration = begin_cell()
                 .store_slice(from_address)
                 .store_uint(0, 2)
                 .store_uint(now(), 64)
                 .store_grams(input_amount)
-                .store_uint(max_provider, 64)
+                .store_uint(tempMaxProvider, 64)
                 .store_uint(1000, 64)
         .end_cell();
 
@@ -24,12 +41,16 @@
         cell newProvider = begin_cell()
                 .store_uint(0, 2)
                 .store_slice(from_address)
-                .store_uint(max_provider, 64)
+                .store_uint(tempMaxProvider, 64)
         .end_cell(); 
 
-        provider_list_for_choising~udict_set_ref(64, max_provider, newProvider);
+        provider_list_for_choising~udict_set_ref(64, tempMaxProvider, newProvider);
 
-        storage::save_data(jettonWallet, jettonMinter, admin, (max_provider + 1), last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        if(tempMaxProvider != max_provider) {
+                storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        } else {
+                storage::save_data(jettonWallet, jettonMinter, admin, (max_provider + 1), last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        }
         return ();
 }
 

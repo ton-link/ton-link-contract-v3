@@ -33,8 +33,6 @@
 		}
 		return ();
 	}
-	;;if(op == op::test::add_6_p()) { test::add_6_provider(sender_address, admin); return (); } ;; test
-	;;if(op == 55212) { test::opt(); return (); } ;; for gas-opt
 	if(op == op::admin::jw()){ admin::change_jettonWallet(in_msg_body, sender_address); return (); }
 	if(op == op::admin::jm()){ admin::change_jettonMinter(in_msg_body, sender_address); return (); }
 	if(op == op::reg::unpause()){ reg::unpause(sender_address); return (); }
