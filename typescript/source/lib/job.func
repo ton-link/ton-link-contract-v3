@@ -1,3 +1,5 @@
+() do_break() impure asm "RETALT";
+forall X -> X getByIndex(tuple t, int index) asm "INDEXVAR";
 (int, int) job::ownership_check(slice address, int jobID) impure {
         (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
         throw_unless(201, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
@@ -38,34 +40,73 @@ tuple job::get_random_tuple(int max) impure {
         return tuple_int;
 }
 
-tuple job::get_address_from_tuple(tuple a) impure {
+int job::get_status_from_validator(int number) {
         (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
-        tuple res = empty_tuple();
-        repeat(5){
-                int temp = a~tpop();
-                slice temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, temp)).begin_parse();
-                int temp_status = temp_address~load_uint(2);
-                if((temp_status == 1) | (temp_status == 2)){
-                        int tempStatus = temp_status;
-                        while((tempStatus == 1) | (tempStatus == 2)){
-                                int new_random = job::get_random_number(max_provider);
-                                ;;if(new_random == 0) { randomize_lt(); new_random = job::get_random_number(max_provider); }
-                                if(~ check_slice_for_empty?(provider_list_for_choising.udict_get_maybe_ref(64, new_random))) { 
-                                        temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, new_random)).begin_parse();
-                                        tempStatus = temp_address~load_uint(2);
-                                } else {
-                                        tempStatus = 2;
-                                }
+
+        throw_unless(800, check_slice_for_empty?(provider_list_for_choising.udict_get_maybe_ref(64, number)));
+        slice temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, number)).begin_parse();
+        int tempStatus = temp_address~load_uint(2);
+        return tempStatus;
+}
+
+slice job::get_address_from_validator(int number) {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+
+        throw_unless(800, check_slice_for_empty?(provider_list_for_choising.udict_get_maybe_ref(64, number)));
+        slice temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, number)).begin_parse();
+        temp_address~load_uint(2);
+        return temp_address~load_msg_addr();
+}
+
+tuple job::unique(tuple inp, int i_pos, int max_provider) {
+        int uniq = 0;
+        while(uniq == 0) {
+                do {
+                        inp = tuple::replace(inp, i_pos, job::get_random_number(max_provider));
+                } until(job::get_status_from_validator(inp.getByIndex(i_pos)) == 0);
+        
+                int i = 0;
+
+                while(i < 5){
+                        if ((inp.getByIndex(i_pos) == inp.getByIndex(i)) & (i != i_pos)) {
+                                uniq = 0; 
+                                do_break(); 
+                        } else { 
+                                uniq = 1; 
                         }
-                        temp_status = tempStatus;
-                }
-                if(temp_status == 0){
-                        res = res.tpush(temp_address~load_msg_addr());
+                        i += 1;
                 }
         }
+        throw_unless(400, inp.tuple_length() == 5);
+        return inp;
+}
+
+tuple job::tuple_status_check(tuple inp, int max_provider) impure {
+        int i = 0;
+        while(i < inp.tuple_length()){
+                if (job::get_status_from_validator(inp.getByIndex(i)) != 0) { 
+                        inp = job::unique(inp, i, max_provider);
+                }
+                i += 1;
+        }
+        throw_unless(400, inp.tuple_length() == 5);
+        return inp;
+}
+
+tuple job::get_address_from_number_tuple(tuple a) {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+
+        tuple res = empty_tuple();
+        a = job::tuple_status_check(a, max_provider);
+        int i = 0;
+        throw_unless(400, a.tuple_length() == 5);
+        while(i < a.tuple_length()) {
+                
+                res = res.tpush(job::get_address_from_validator(a.getByIndex(i)));
+                i += 1;
+        }
         throw_unless(400, res.tuple_length() == 5);
-        
-        return res;
+        return res;       
 }
 
 () job::create(slice full_msg) impure {
@@ -90,7 +131,7 @@ tuple job::get_address_from_tuple(tuple a) impure {
                 .store_ref(link)
         .end_cell();
         tuple number_tuple = tuple::test_gen_rand_tuple(max_provider);
-        tuple tuple_address = job::get_address_from_tuple(number_tuple);
+        tuple tuple_address = job::get_address_from_number_tuple(number_tuple);
         slice addr0 = tuple_address~tpop();
         slice addr1 = tuple_address~tpop();
         slice addr2 = tuple_address~tpop();

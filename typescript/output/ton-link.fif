@@ -31,7 +31,11 @@ PROGRAM{
   DECLPROC job::ownership_check
   DECLPROC job::get_random_number
   DECLPROC job::get_random_tuple
-  DECLPROC job::get_address_from_tuple
+  DECLPROC job::get_status_from_validator
+  DECLPROC job::get_address_from_validator
+  DECLPROC job::unique
+  DECLPROC job::tuple_status_check
+  DECLPROC job::get_address_from_number_tuple
   DECLPROC job::create
   DECLPROC job::check_time
   DECLPROC job::check_status
@@ -818,70 +822,136 @@ PROGRAM{
     }>
     NIP
   }>
-  job::get_address_from_tuple PROC:<{
+  job::get_status_from_validator PROC:<{
     storage::load_data INLINECALLDICT
-    s6 POP
-    4 BLKDROP
-    2 2 BLKDROP2
-    NIL
-    5 PUSHINT
-    REPEAT:<{
-      s0 s3 XCHG
-      TPOP
-      s3 PUSH
-      64 PUSHINT
-      DICTUGETOPTREF
-      CTOS
-      2 LDU
-      OVER
-      1 EQINT
-      s2 PUSH
-      2 EQINT
-      OR
-      IF:<{
-        WHILE:<{
-          OVER
-          1 EQINT
-          s2 PUSH
-          2 EQINT
-          OR
-        }>DO<{
-          NIP
-          s2 PUSH
-          job::get_random_number CALLDICT
-          s0 s4 PUSH2
-          64 PUSHINT
-          DICTUGETOPTREF
-          <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
-          NOT
-          IF:<{
-            NIP
-            s3 PUSH
-            64 PUSHINT
-            DICTUGETOPTREF
-            CTOS
-            2 LDU
-          }>ELSE<{
-            DROP
-            2 PUSHINT
-            SWAP
-          }>
-        }>
-      }>
-      SWAP
+    8 1 BLKDROP2
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    800 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    2 LDU
+    DROP
+  }>
+  job::get_address_from_validator PROC:<{
+    storage::load_data INLINECALLDICT
+    8 1 BLKDROP2
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    800 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    2 LDU
+    NIP
+    LDMSGADDR
+    DROP
+  }>
+  job::unique PROC:<{
+    0 PUSHINT
+    WHILE:<{
+      DUP
       0 EQINT
-      IF:<{
-        LDMSGADDR
-        DROP
+    }>DO<{
+      UNTIL:<{
+        OVER
+        job::get_random_number CALLDICT
+        s4 s3 s(-1) XCPUXC
+        tuple::replace CALLDICT
+        s0 s2 PUSH2
+        INDEXVAR
+        job::get_status_from_validator CALLDICT
+        0 EQINT
         s1 s4 XCHG
-        TPUSH
-        s0 s3 XCHG
-      }>ELSE<{
-        DROP
       }>
-      s0 s3 XCHG
+      0 PUSHINT
+      WHILE:<{
+        DUP
+        5 LESSINT
+      }>DO<{
+        NIP
+        2OVER
+        INDEXVAR
+        s4 s1 PUSH2
+        INDEXVAR
+        EQUAL
+        s1 s3 PUSH2
+        NEQ
+        AND
+        IF:<{
+          0 PUSHINT
+          RETALT
+        }>ELSE<{
+          1 PUSHINT
+        }>
+        SWAP
+        INC
+      }>
+      DROP
     }>
-    3 1 BLKDROP2
+    3 BLKDROP
+    DUP
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+  }>
+  job::tuple_status_check PROC:<{
+    0 PUSHINT
+    WHILE:<{
+      s2 PUSH
+      TLEN
+      s1 s(-1) PUXC
+      LESS
+    }>DO<{
+      s2 s0 PUSH2
+      INDEXVAR
+      job::get_status_from_validator CALLDICT
+      0 NEQINT
+      IF:<{
+        s2 s2 s1 XCPU2
+        job::unique CALLDICT
+        s0 s2 XCHG
+      }>
+      INC
+    }>
+    2DROP
+    DUP
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+  }>
+  job::get_address_from_number_tuple PROC:<{
+    storage::load_data INLINECALLDICT
+    s5 s8 XCHG
+    8 BLKDROP
+    NIL
+    -ROT
+    job::tuple_status_check CALLDICT
+    0 PUSHINT
+    OVER
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+    WHILE:<{
+      OVER
+      TLEN
+      s1 s(-1) PUXC
+      LESS
+    }>DO<{
+      2DUP
+      INDEXVAR
+      job::get_address_from_validator CALLDICT
+      s1 s3 XCHG
+      TPUSH
+      s0 s2 XCHG
+      INC
+    }>
+    2DROP
     DUP
     TLEN
     5 EQINT
@@ -911,7 +981,7 @@ PROGRAM{
     ENDC
     s8 PUSH
     tuple::test_gen_rand_tuple CALLDICT
-    job::get_address_from_tuple CALLDICT
+    job::get_address_from_number_tuple CALLDICT
     TPOP
     SWAP
     TPOP

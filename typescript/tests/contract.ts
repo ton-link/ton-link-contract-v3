@@ -30,7 +30,7 @@ export default class Tonlink implements Contract {
 
         async sendAction(provider: ContractProvider, via: Sender, body: Cell) {
                 var res = await provider.internal(via, {
-                        value: "1",
+                        value: "1.5",
                         body: body
                 });
                 return res
