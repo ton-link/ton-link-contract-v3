@@ -549,7 +549,7 @@ describe("ton-link-v3 tests", async () => {
                                 .storeUint(150, 32)
                                 .storeUint(0, 64)
                         .endCell()
-                        await tonlinkContract.sendAction(my.getSender(), body);
+                        var result = await tonlinkContract.sendAction(my.getSender(), body);
                         const res = await tonlinkContract.get_info_about_provider(my.address);
                         var resSlice = res.beginParse()
                         expect(resSlice.loadAddress().toString()).to.equal(my.address.toString())
@@ -557,6 +557,16 @@ describe("ton-link-v3 tests", async () => {
                         resSlice.loadUint(64)
                         expect(resSlice.loadCoins()).to.equal(0n)
                 });
+                it("Get stake", async () => {
+                        var body = beginCell()
+                                .storeUint(170, 32)
+                                .storeUint(0, 64)
+                        .endCell()
+                        var result = await tonlinkContract.sendAction(my.getSender(), body);
+                        var res = flattenTransaction(result.transactions[2]);
+                        expect(res.exitCode).to.equal(0)
+                        expect(res.aborted).to.equal(false)
+                })
         }); 
             
         describe("ton-link-v3 registration of all val", async () => {

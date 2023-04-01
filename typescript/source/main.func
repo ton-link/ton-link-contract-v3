@@ -38,6 +38,8 @@
 	if(op == op::reg::unpause()){ reg::unpause(sender_address); return (); }
 	if(op == op::reg::pause()){ reg::pause(sender_address); return (); }
 	if(op == op::reg::delete()){ reg::delete(sender_address); return (); }
+	if(op == op::reg::getStake()){ reg::getStake(sender_address); return (); }
 	if(op == op::job::add()){ job::add(sender_address, in_msg_body); return (); }
+
 	throw(0xffff);
 }
