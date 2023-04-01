@@ -106,7 +106,7 @@
                 .store_slice(orig_address)
                 .store_uint(2, 2)
                 .store_uint(orig_time, 64)
-                .store_grams(0)
+                .store_grams(orig_value)
                 .store_uint(orig_number_provider, 64)
                 .store_uint(orig_rep_provider, 64)
         .end_cell();
@@ -179,8 +179,10 @@
                 .store_uint(0, 64)
                 .store_grams(orig_value)
                 .store_slice(orig_address)
+                .store_slice(utils::null_addr())
                 .store_dict(new_dict())
                 .store_grams(0)
+                .store_uint(1, 64)
         .end_cell();
 
         var msg = begin_cell()
@@ -189,6 +191,7 @@
               .store_grams(0)
               .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
               .store_ref(msg_body)
+              .store_slice(msg_body.begin_parse())
         .end_cell();
         send_raw_message(msg, 64);
         return ();
