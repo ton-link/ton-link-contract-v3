@@ -555,7 +555,7 @@ describe("ton-link-v3 tests", async () => {
                         expect(resSlice.loadAddress().toString()).to.equal(my.address.toString())
                         expect(resSlice.loadUint(2)).to.equal(2)
                         resSlice.loadUint(64)
-                        expect(resSlice.loadCoins()).to.equal(0n)
+                        expect(resSlice.loadCoins()).to.equal(30000000000000n)
                 });
                 it("Get stake", async () => {
                         var body = beginCell()

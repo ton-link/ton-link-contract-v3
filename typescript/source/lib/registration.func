@@ -169,11 +169,24 @@
         slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
         slice orig_address = newRegistration_old~load_msg_addr();
         int status = newRegistration_old~load_uint(2);
-        throw_unless(102, status == 2);
         int orig_time = newRegistration_old~load_uint(64);
         int orig_value = newRegistration_old~load_grams();
         int orig_number_provider = newRegistration_old~load_uint(64);
         int orig_rep_provider = newRegistration_old~load_uint(64);
+
+        throw_unless(102, status == 2);
+        throw_unless(103, orig_value != 0);
+
+        cell newRegistration = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(2, 2)
+                .store_uint(0, 64)
+                .store_grams(0)
+                .store_uint(orig_number_provider, 64)
+                .store_uint(orig_rep_provider, 64)
+        .end_cell();
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
         var msg_body = begin_cell()
                 .store_uint(op::transfer(), 32)
                 .store_uint(0, 64)
@@ -194,5 +207,8 @@
               .store_slice(msg_body.begin_parse())
         .end_cell();
         send_raw_message(msg, 64);
+
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+
         return ();
 }
