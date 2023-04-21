@@ -1,0 +1,50 @@
+int tep74::send(slice address, int value) impure  {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        var msg_body = begin_cell()
+                .store_uint(op::transfer(), 32)
+                .store_uint(0, 64)
+                .store_grams(value)
+                .store_slice(address)
+                .store_dict(new_dict())
+                .store_grams(0)
+        .end_cell();
+
+        var msg = begin_cell()
+              .store_uint(0x18, 6)
+              .store_slice(jettonWallet)
+              .store_grams(0)
+              .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+              .store_ref(msg_body)
+        .end_cell();
+        send_raw_message(msg, 64);
+        return -1;
+}
+
+() tep74::mint(slice address, int value) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        cell transferBody = begin_cell()
+                .store_uint(op::internal_transfer(), 32)
+                .store_uint(0, 64)
+                .store_grams(value)
+                .store_slice(utils::get_null_slice())
+                .store_slice(utils::get_null_slice())
+                .store_grams(0)
+        .end_cell();
+        cell body = begin_cell()
+                .store_uint(op::mint(), 32)
+                .store_uint(0, 64)
+                .store_slice(address)
+                .store_grams(0)
+                .store_ref(transferBody)
+        .end_cell();
+
+        cell msg = begin_cell()
+                .store_uint(0x18, 6)
+                .store_slice(jettonMinter)
+                .store_grams(0)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                .store_ref(body)
+                .store_slice(begin_parse(body))
+        .end_cell();
+        send_raw_message(msg, 64);
+}

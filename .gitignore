@@ -1,1 +1,3 @@
 /build
+typescript/node_modules
+typescript/mochawesome-report

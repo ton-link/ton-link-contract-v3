@@ -1,0 +1,214 @@
+{-
+	@title: rqgistration lib
+	@author Konstantin Klyuchnikov (knstntn.asuoki.eth)
+-}
+
+() reg::add(slice msg) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        int input_amount = msg~load_grams();
+        slice from_address = msg~load_msg_addr();
+        throw_unless(99, input_amount == 30000000000000);
+        var (_, key_addr) = parse_std_addr(from_address);
+        int tempMaxProvider = 0;
+        if(check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr))){
+                slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+                slice orig_address = newRegistration_old~load_msg_addr();
+                int status = newRegistration_old~load_uint(2);
+                if(status != 2) {
+                        throw_if(100, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+                }
+                newRegistration_old~load_uint(64);
+                newRegistration_old~load_grams();
+                int orig_number_provider = newRegistration_old~load_uint(64);
+                tempMaxProvider = orig_number_provider;
+        }
+
+        if(tempMaxProvider == 0) {
+                tempMaxProvider = max_provider;
+        }
+
+        cell newRegistration = begin_cell()
+                .store_slice(from_address)
+                .store_uint(0, 2)
+                .store_uint(now(), 64)
+                .store_grams(input_amount)
+                .store_uint(tempMaxProvider, 64)
+                .store_uint(1000, 64)
+        .end_cell();
+
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
+        cell newProvider = begin_cell()
+                .store_uint(0, 2)
+                .store_slice(from_address)
+                .store_uint(tempMaxProvider, 64)
+        .end_cell(); 
+
+        provider_list_for_choising~udict_set_ref(64, tempMaxProvider, newProvider);
+
+        if(tempMaxProvider != max_provider) {
+                storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        } else {
+                storage::save_data(jettonWallet, jettonMinter, admin, (max_provider + 1), last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        }
+        return ();
+}
+
+() reg::pause(slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data(); 
+        var (_, key_addr) = parse_std_addr(sender_address);
+        throw_unless(101, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = newRegistration_old~load_msg_addr();
+        int status = newRegistration_old~load_uint(2);
+        throw_unless(102, status == 0);
+        int orig_time = newRegistration_old~load_uint(64);
+        int orig_value = newRegistration_old~load_grams();
+        int orig_number_provider = newRegistration_old~load_uint(64);
+        int orig_rep_provider = newRegistration_old~load_uint(64);
+        cell newRegistration = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(1, 2)
+                .store_uint(orig_time, 64)
+                .store_grams(orig_value)
+                .store_uint(orig_number_provider, 64)
+                .store_uint(orig_rep_provider, 64)
+        .end_cell();
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
+        slice newRegistration_old = (provider_list_for_choising.udict_get_maybe_ref(64, orig_number_provider)).begin_parse();
+
+        cell newProvider = begin_cell()
+                .store_uint(1, 2)
+                .store_slice(orig_address)
+                .store_uint(orig_number_provider, 64)
+        .end_cell(); 
+
+        provider_list_for_choising~udict_set_ref(64, orig_number_provider, newProvider);
+
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();
+}
+
+() reg::delete(slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        var (_, key_addr) = parse_std_addr(sender_address);
+        throw_unless(102, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = newRegistration_old~load_msg_addr();
+        int status = newRegistration_old~load_uint(2);
+        throw_unless(103, status == 0);
+        int orig_time = newRegistration_old~load_uint(64);
+        int orig_value = newRegistration_old~load_grams();
+        int orig_number_provider = newRegistration_old~load_uint(64);
+        int orig_rep_provider = newRegistration_old~load_uint(64);
+        cell newRegistration = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(2, 2)
+                .store_uint(orig_time, 64)
+                .store_grams(orig_value)
+                .store_uint(orig_number_provider, 64)
+                .store_uint(orig_rep_provider, 64)
+        .end_cell();
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
+        slice newRegistration_old = (provider_list_for_choising.udict_get_maybe_ref(64, orig_number_provider)).begin_parse();
+
+        cell newProvider = begin_cell()
+                .store_uint(2, 2)
+                .store_slice(orig_address)
+                .store_uint(orig_number_provider, 64)
+        .end_cell(); 
+
+        provider_list_for_choising~udict_set_ref(64, orig_number_provider, newProvider);
+
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();
+}
+
+() reg::unpause(slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data(); 
+        var (_, key_addr) = parse_std_addr(sender_address);
+        throw_unless(101, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = newRegistration_old~load_msg_addr();
+        int status = newRegistration_old~load_uint(2);
+        throw_unless(102, status == 1);
+        int orig_time = newRegistration_old~load_uint(64);
+        int orig_value = newRegistration_old~load_grams();
+        int orig_number_provider = newRegistration_old~load_uint(64);
+        int orig_rep_provider = newRegistration_old~load_uint(64);
+        cell newRegistration = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(0, 2)
+                .store_uint(orig_time, 64)
+                .store_grams(orig_value)
+                .store_uint(orig_number_provider, 64)
+                .store_uint(orig_rep_provider, 64)
+        .end_cell();
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
+        slice newRegistration_old = (provider_list_for_choising.udict_get_maybe_ref(64, orig_number_provider)).begin_parse();
+
+        cell newProvider = begin_cell()
+                .store_uint(0, 2)
+                .store_slice(orig_address)
+                .store_uint(orig_number_provider, 64)
+        .end_cell(); 
+
+        provider_list_for_choising~udict_set_ref(64, orig_number_provider, newProvider);
+
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();
+}
+
+() reg::getStake(slice sender_address) impure {
+        (slice jettonWallet, slice jettonMinter, slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data(); 
+        var (_, key_addr) = parse_std_addr(sender_address);
+        throw_unless(101, check_slice_for_empty?(provider_list.udict_get_maybe_ref(256, key_addr)));
+        slice newRegistration_old = (provider_list.udict_get_maybe_ref(256, key_addr)).begin_parse();
+        slice orig_address = newRegistration_old~load_msg_addr();
+        int status = newRegistration_old~load_uint(2);
+        int orig_time = newRegistration_old~load_uint(64);
+        int orig_value = newRegistration_old~load_grams();
+        int orig_number_provider = newRegistration_old~load_uint(64);
+        int orig_rep_provider = newRegistration_old~load_uint(64);
+
+        throw_unless(102, status == 2);
+        throw_unless(103, orig_value != 0);
+
+        cell newRegistration = begin_cell()
+                .store_slice(orig_address)
+                .store_uint(2, 2)
+                .store_uint(0, 64)
+                .store_grams(0)
+                .store_uint(orig_number_provider, 64)
+                .store_uint(orig_rep_provider, 64)
+        .end_cell();
+        provider_list~udict_set_ref(256, key_addr, newRegistration);
+
+        var msg_body = begin_cell()
+                .store_uint(op::transfer(), 32)
+                .store_uint(0, 64)
+                .store_grams(orig_value)
+                .store_slice(orig_address)
+                .store_slice(utils::null_addr())
+                .store_dict(new_dict())
+                .store_grams(0)
+                .store_uint(1, 64)
+        .end_cell();
+
+        var msg = begin_cell()
+              .store_uint(0x18, 6)
+              .store_slice(jettonWallet)
+              .store_grams(0)
+              .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+              .store_ref(msg_body)
+              .store_slice(msg_body.begin_parse())
+        .end_cell();
+        send_raw_message(msg, 64);
+
+        storage::save_data(jettonWallet, jettonMinter, admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+
+        return ();
+}

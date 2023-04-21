@@ -1,0 +1,2146 @@
+PROGRAM{
+  DECLPROC storage::load_data
+  DECLPROC storage::save_data
+  DECLPROC utils::get_null_slice
+  DECLPROC utils::get_null_cell
+  DECLPROC utils::parse_sender_address
+  84165 DECLMETHOD get_job_by_jobid
+  82131 DECLMETHOD get_info_about_provider
+  71882 DECLMETHOD get_last_job
+  66241 DECLMETHOD get_active_job_by_jobid
+  125120 DECLMETHOD get_max_provider
+  91826 DECLMETHOD get_tlink_wallet
+  106357 DECLMETHOD get_tlink_minter
+  71877 DECLMETHOD check_for_ownership
+  68432 DECLMETHOD get_link_by_jobID
+  DECLPROC tep74::send
+  DECLPROC tep74::mint
+  DECLPROC math::get_min
+  DECLPROC math::get_percent
+  DECLPROC tuple::delete
+  DECLPROC tuple::get_random_number
+  DECLPROC tuple::get_by_count
+  DECLPROC tuple::replace
+  DECLPROC tuple::in_tuple
+  DECLPROC tuple::match_check
+  DECLPROC tuple::generation_rand_array
+  DECLPROC tuple::test_gen_rand_tuple
+  DECLPROC consensus::get_mean
+  DECLPROC consensus::penalty
+  DECLPROC consensus::reward
+  DECLPROC job::ownership_check
+  DECLPROC job::get_random_number
+  DECLPROC job::get_random_tuple
+  DECLPROC job::get_status_from_validator
+  DECLPROC job::get_address_from_validator
+  DECLPROC job::unique
+  DECLPROC job::tuple_status_check
+  DECLPROC job::get_address_from_number_tuple
+  DECLPROC job::create
+  DECLPROC job::check_time
+  DECLPROC job::check_status
+  DECLPROC job::get_address_by_count
+  DECLPROC job::double_answer
+  DECLPROC job::complete_job
+  DECLPROC job::check_to_complete_job
+  DECLPROC job::add_result
+  DECLPROC job::add
+  DECLPROC reg::add
+  DECLPROC reg::pause
+  DECLPROC reg::delete
+  DECLPROC reg::unpause
+  DECLPROC reg::getStake
+  DECLPROC admin::change_jettonWallet
+  DECLPROC admin::change_jettonMinter
+  DECLPROC recv_internal
+  storage::load_data PROCINLINE:<{
+    c4 PUSH
+    CTOS
+    LDMSGADDR
+    LDMSGADDR
+    LDMSGADDR
+    64 LDU
+    64 LDU
+    LDDICT
+    LDDICT
+    LDDICT
+    LDDICT
+    DROP
+  }>
+  storage::save_data PROCINLINE:<{
+    NEWC
+    s0 s9 XCHG2
+    STSLICER
+    s0 s7 XCHG2
+    STSLICER
+    s0 s5 XCHG2
+    STSLICER
+    s1 s3 XCHG
+    64 STU
+    64 STU
+    STDICT
+    STDICT
+    STDICT
+    STDICT
+    ENDC
+    c4 POP
+  }>
+  utils::get_null_slice PROC:<{
+    NEWC
+    ENDC
+    CTOS
+  }>
+  utils::get_null_cell PROC:<{
+    NEWC
+    ENDC
+  }>
+  utils::parse_sender_address PROC:<{
+    CTOS
+    4 LDU
+    NIP
+    LDMSGADDR
+    DROP
+  }>
+  get_job_by_jobid PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    64 PUSHINT
+    DICTUGETOPTREF
+  }>
+  get_info_about_provider PROC:<{
+    storage::load_data INLINECALLDICT
+    s3 s8 XCHG
+    8 BLKDROP
+    SWAP
+    REWRITESTDADDR
+    NIP
+    SWAP
+    8 PUSHPOW2
+    DICTUGETOPTREF
+  }>
+  get_last_job PROC:<{
+    storage::load_data INLINECALLDICT
+    s4 s8 XCHG
+    8 BLKDROP
+  }>
+  get_active_job_by_jobid PROC:<{
+    storage::load_data INLINECALLDICT
+    s1 s8 XCHG
+    8 BLKDROP
+    64 PUSHINT
+    DICTUGETOPTREF
+  }>
+  get_max_provider PROC:<{
+    storage::load_data INLINECALLDICT
+    s5 s8 XCHG
+    8 BLKDROP
+  }>
+  get_tlink_wallet PROC:<{
+    storage::load_data INLINECALLDICT
+    8 BLKDROP
+  }>
+  get_tlink_minter PROC:<{
+    storage::load_data INLINECALLDICT
+    s7 s8 XCHG
+    8 BLKDROP
+  }>
+  check_for_ownership PROC:<{
+    c2 SAVE
+    SAMEALTSAVE
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    SWAP
+    CTOS
+    3 PUSHINT
+    REPEAT:<{
+      LDMSGADDR
+      s3 s1 PUXC
+      SDEQ
+      IFJMP:<{
+        3 BLKDROP
+        -1 PUSHINT
+        RETALT
+      }>
+    }>
+    DROP
+    LDREF
+    DROP
+    CTOS
+    2 PUSHINT
+    REPEAT:<{
+      LDMSGADDR
+      s2 s1 PUXC
+      SDEQ
+      IFJMP:<{
+        2DROP
+        -1 PUSHINT
+        RETALT
+      }>
+    }>
+    2DROP
+    0 PUSHINT
+  }>
+  get_link_by_jobID PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    DROP
+  }>
+  tep74::send PROC:<{
+    storage::load_data INLINECALLDICT
+    8 BLKDROP
+    NEWDICT
+    0 PUSHINT
+    0xf8a7ea5 PUSHINT
+    NEWC
+    32 STU
+    64 STU
+    s0 s3 XCHG2
+    STGRAMS
+    s0 s3 XCHG2
+    STSLICER
+    STDICT
+    0 PUSHINT
+    STGRAMS
+    ENDC
+    0 PUSHINT
+    24 PUSHINT
+    NEWC
+    6 STU
+    s0 s3 XCHG2
+    STSLICER
+    s2 PUSH
+    STGRAMS
+    s1 s2 XCHG
+    107 STU
+    STREF
+    ENDC
+    64 PUSHINT
+    SENDRAWMSG
+    -1 PUSHINT
+  }>
+  tep74::mint PROC:<{
+    storage::load_data INLINECALLDICT
+    s7 s8 XCHG
+    8 BLKDROP
+    0 PUSHINT
+    0x178d4519 PUSHINT
+    NEWC
+    32 STU
+    64 STU
+    ROT
+    STGRAMS
+    utils::get_null_slice CALLDICT
+    STSLICER
+    utils::get_null_slice CALLDICT
+    STSLICER
+    0 PUSHINT
+    STGRAMS
+    ENDC
+    0 PUSHINT
+    21 PUSHINT
+    NEWC
+    32 STU
+    64 STU
+    s0 s3 XCHG2
+    STSLICER
+    0 PUSHINT
+    STGRAMS
+    s1 s2 XCHG
+    STREF
+    ENDC
+    0 PUSHINT
+    24 PUSHINT
+    NEWC
+    6 STU
+    s0 s3 XCHG2
+    STSLICER
+    s2 PUSH
+    STGRAMS
+    s1 s2 XCHG
+    107 STU
+    s1 s(-1) PUXC
+    STREF
+    SWAP
+    CTOS
+    STSLICER
+    ENDC
+    64 PUSHINT
+    SENDRAWMSG
+  }>
+  math::get_min PROC:<{
+    SWAP
+    TPOP
+    s0 s2 XCHG
+    DEC
+    REPEAT:<{
+      TPOP
+      s0 s2 PUSH2
+      LESS
+      IF:<{
+        s2 POP
+      }>ELSE<{
+        DROP
+      }>
+    }>
+    DROP
+  }>
+  math::get_percent PROC:<{
+    2DUP
+    GREATER
+    IF:<{
+      DIV
+      DEC
+      100 MULCONST
+    }>ELSE<{
+      SWAP
+      DIV
+      DEC
+      100 MULCONST
+    }>
+  }>
+  tuple::delete PROC:<{
+    0 TUPLE
+    OVER
+    TLEN
+    DEC
+    REPEAT:<{
+      SWAP
+      TPOP
+      s1 s2 XCHG
+      TPUSH
+    }>
+    NIP
+    0 TUPLE
+    OVER
+    TLEN
+    REPEAT:<{
+      SWAP
+      TPOP
+      s1 s2 XCHG
+      TPUSH
+    }>
+    NIP
+  }>
+  tuple::get_random_number PROC:<{
+    LTIME
+    ADDRAND
+    RAND
+  }>
+  tuple::get_by_count PROC:<{
+    0 PUSHINT
+    SWAP
+    INC
+    REPEAT:<{
+      DROP
+      DUP
+      FIRST
+      SWAP
+      tuple::delete CALLDICT
+      SWAP
+    }>
+    NIP
+  }>
+  tuple::replace PROC:<{
+    0 TUPLE
+    s3 PUSH
+    TLEN
+    s0 s3 XCHG
+    INC
+    s1 s3 XCHG
+    SUB
+    REPEAT:<{
+      s0 s2 XCHG
+      TPOP
+      s1 s2 XCHG
+      TPUSH
+      ROT
+    }>
+    s0 s2 XCHG
+    TPOP
+    DROP
+    ROT
+    TPUSH
+    OVER
+    TLEN
+    REPEAT:<{
+      SWAP
+      TPOP
+      s1 s2 XCHG
+      TPUSH
+    }>
+    NIP
+  }>
+  tuple::in_tuple PROC:<{
+    c2 SAVE
+    SAMEALTSAVE
+    0 PUSHINT
+    SWAP
+    REPEAT:<{
+      s2 s0 PUSH2
+      tuple::get_by_count CALLDICT
+      s2 s(-1) PUXC
+      EQUAL
+      IFJMP:<{
+        3 BLKDROP
+        -1 PUSHINT
+        RETALT
+      }>
+      INC
+    }>
+    3 BLKDROP
+    0 PUSHINT
+  }>
+  tuple::match_check PROC:<{
+    0 PUSHINT
+    s2 PUSH
+    TLEN
+    REPEAT:<{
+      s2 s0 PUSH2
+      tuple::get_by_count CALLDICT
+      0 PUSHINT
+      WHILE:<{
+        DUP
+        0 EQINT
+      }>DO<{
+        s4 PUSH
+        TLEN
+        s5 s2 s(-2) PU2XC
+        tuple::in_tuple CALLDICT
+        -1 EQINT
+        IF:<{
+          NIP
+          s2 PUSH
+          tuple::get_random_number CALLDICT
+        }>ELSE<{
+          DROP
+          s3 s1 s3 XCPU2
+          tuple::replace CALLDICT
+          SWAP
+          INC
+          s0 s3 XCHG2
+          -1 PUSHINT
+          SWAP
+        }>
+        SWAP
+      }>
+      2DROP
+    }>
+    2DROP
+  }>
+  tuple::generation_rand_array PROC:<{
+    0 TUPLE
+    WHILE:<{
+      DUP
+      TLEN
+      5 LESSINT
+    }>DO<{
+      OVER
+      tuple::get_random_number CALLDICT
+      UNTIL:<{
+        -1 PUSHINT
+        0 PUSHINT
+        s3 PUSH
+        TLEN
+        REPEAT:<{
+          s3 s0 PUSH2
+          tuple::get_by_count CALLDICT
+          s3 s(-1) PUXC
+          EQUAL
+          IF:<{
+            0 PUSHINT
+            s2 POP
+          }>
+          INC
+        }>
+        DROP
+        0 EQINT
+      }>
+      TPUSH
+    }>
+    NIP
+  }>
+  tuple::test_gen_rand_tuple PROC:<{
+    0 PUSHINT
+    s0 s0 s0 PUSH3
+    DUP
+    5 TUPLE
+    0 PUSHINT
+    s0 s0 PUSH2
+    1 PUSHINT
+    5 PUSHINT
+    REPEAT:<{
+      s3 PUSH
+      0 EQINT
+      IF:<{
+        DROP
+        s4 PUSH
+        tuple::get_random_number CALLDICT
+        s4 s3 s(-1) XCPUXC
+        tuple::replace CALLDICT
+      }>ELSE<{
+        WHILE:<{
+          DUP
+          0 NEQINT
+        }>DO<{
+          NIP
+          s4 PUSH
+          tuple::get_random_number CALLDICT
+          WHILE:<{
+            s2 s3 PUSH2
+            LESS
+          }>DO<{
+            NIP
+            s3 s1 PUSH2
+            tuple::get_by_count CALLDICT
+            s1 s(-1) PUXC
+            EQUAL
+            IF:<{
+              NIP
+              OVER
+              1 PUSHINT
+            }>ELSE<{
+              SWAP
+              0 PUSHINT
+            }>
+            SWAP
+            INC
+            s0 s2 XCHG
+          }>
+          0 PUSHINT
+          s3 POP
+          SWAP
+        }>
+        DROP
+        s3 s2 s3 XCPU2
+        tuple::replace CALLDICT
+      }>
+      1 PUSHINT
+      s0 s3 XCHG
+      INC
+      s4 s3 XCHG2
+    }>
+    s4 s5 XCHG
+    5 BLKDROP
+  }>
+  consensus::get_mean PROC:<{
+    DUP
+    FIRST
+    SWAP
+    tuple::delete CALLDICT
+    DUP
+    FIRST
+    OVER
+    SECOND
+    s2 PUSH
+    THIRD
+    s0 s3 XCHG
+    3 INDEX
+    s2 s1 PUSH2
+    ADD
+    s4 PUSH
+    ADD
+    OVER
+    ADD
+    2 RSHIFT#
+    s5 s(-1) PUXC
+    SUB
+    ABS
+    s5 s2 PUSH2
+    ADD
+    s5 PUSH
+    ADD
+    s2 PUSH
+    ADD
+    2 RSHIFT#
+    s4 s(-1) PUXC
+    SUB
+    ABS
+    s6 s4 PUSH2
+    ADD
+    s6 PUSH
+    ADD
+    s3 PUSH
+    ADD
+    2 RSHIFT#
+    s4 s(-1) PUXC
+    SUB
+    ABS
+    s7 s5 PUSH2
+    ADD
+    s5 PUSH
+    ADD
+    s4 PUSH
+    ADD
+    2 RSHIFT#
+    s7 s(-1) PUXC
+    SUB
+    ABS
+    s8 s6 PUSH2
+    ADD
+    s6 PUSH
+    ADD
+    s8 PUSH
+    ADD
+    2 RSHIFT#
+    s5 s(-1) PUXC
+    SUB
+    ABS
+    s4 s3 s(-2) PU2XC
+    s4 s3 s(-2) PU2XC
+    5 TUPLE
+    5 PUSHINT
+    math::get_min CALLDICT
+    s4 s4 XCPU
+    EQUAL
+    IFJMP:<{
+      8 BLKDROP
+    }>
+    s8 POP
+    s1 s2 XCPU
+    EQUAL
+    IFJMP:<{
+      s4 s6 XCHG
+      6 BLKDROP
+    }>
+    s4 POP
+    s3 s3 XCPU
+    EQUAL
+    IFJMP:<{
+      s1 s4 XCHG
+      4 BLKDROP
+    }>
+    NIP
+    s3 s3 XCHG2
+    EQUAL
+    IFJMP:<{
+      NIP
+    }>
+    DROP
+  }>
+  consensus::penalty PROC:<{
+    storage::load_data INLINECALLDICT
+    s3 s8 XCHG
+    8 BLKDROP
+    s0 s2 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s2 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    200 THROWIFNOT
+    ROT
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    64 LDU
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    s2 s6 XCHG2
+    SUB
+    s0 s5 XCHG
+    -2 ADDCONST
+    NEWC
+    s0 s5 XCHG2
+    STSLICER
+    s1 s3 XCHG
+    2 STU
+    64 STU
+    s0 s3 XCHG2
+    STGRAMS
+    s1 s2 XCHG
+    64 STU
+    64 STU
+    ENDC
+  }>
+  consensus::reward PROC:<{
+    storage::load_data INLINECALLDICT
+    s3 s8 XCHG
+    8 BLKDROP
+    s0 s2 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s2 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    201 THROWIFNOT
+    ROT
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    64 LDU
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    s2 s6 XCHG2
+    ADD
+    s0 s5 XCHG
+    2 ADDCONST
+    NEWC
+    s0 s5 XCHG2
+    STSLICER
+    s1 s3 XCHG
+    2 STU
+    64 STU
+    s0 s3 XCHG2
+    STGRAMS
+    s1 s2 XCHG
+    64 STU
+    64 STU
+    ENDC
+  }>
+  job::ownership_check PROC:<{
+    c2 SAVE
+    SAMEALTSAVE
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    201 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    SWAP
+    CTOS
+    0 PUSHINT
+    3 PUSHINT
+    REPEAT:<{
+      SWAP
+      LDMSGADDR
+      s0 s2 XCHG
+      INC
+      s4 s1 PUXC
+      SDEQ
+      IFJMP:<{
+        2 1 BLKDROP2
+        -1 PUSHINT
+        s2 POP
+        RETALT
+      }>
+    }>
+    NIP
+    SWAP
+    LDREF
+    DROP
+    CTOS
+    2 PUSHINT
+    REPEAT:<{
+      LDMSGADDR
+      s0 s2 XCHG
+      INC
+      s3 s1 PUXC
+      SDEQ
+      IFJMP:<{
+        NIP
+        -1 PUSHINT
+        s2 POP
+        RETALT
+      }>
+      SWAP
+    }>
+    3 BLKDROP
+    0 PUSHINT
+    DUP
+  }>
+  job::get_random_number PROC:<{
+    LTIME
+    ADDRAND
+    RAND
+  }>
+  job::get_random_tuple PROC:<{
+    NIL
+    5 PUSHINT
+    REPEAT:<{
+      OVER
+      job::get_random_number CALLDICT
+      TPUSH
+    }>
+    NIP
+  }>
+  job::get_status_from_validator PROC:<{
+    storage::load_data INLINECALLDICT
+    8 1 BLKDROP2
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    800 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    2 LDU
+    DROP
+  }>
+  job::get_address_from_validator PROC:<{
+    storage::load_data INLINECALLDICT
+    8 1 BLKDROP2
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    800 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    2 LDU
+    NIP
+    LDMSGADDR
+    DROP
+  }>
+  job::unique PROC:<{
+    0 PUSHINT
+    WHILE:<{
+      DUP
+      0 EQINT
+    }>DO<{
+      UNTIL:<{
+        OVER
+        job::get_random_number CALLDICT
+        s4 s3 s(-1) XCPUXC
+        tuple::replace CALLDICT
+        s0 s2 PUSH2
+        INDEXVAR
+        job::get_status_from_validator CALLDICT
+        0 EQINT
+        s1 s4 XCHG
+      }>
+      0 PUSHINT
+      WHILE:<{
+        DUP
+        5 LESSINT
+      }>DO<{
+        NIP
+        2OVER
+        INDEXVAR
+        s4 s1 PUSH2
+        INDEXVAR
+        EQUAL
+        s1 s3 PUSH2
+        NEQ
+        AND
+        IF:<{
+          0 PUSHINT
+          RETALT
+        }>ELSE<{
+          1 PUSHINT
+        }>
+        SWAP
+        INC
+      }>
+      DROP
+    }>
+    3 BLKDROP
+    DUP
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+  }>
+  job::tuple_status_check PROC:<{
+    0 PUSHINT
+    WHILE:<{
+      s2 PUSH
+      TLEN
+      s1 s(-1) PUXC
+      LESS
+    }>DO<{
+      s2 s0 PUSH2
+      INDEXVAR
+      job::get_status_from_validator CALLDICT
+      0 NEQINT
+      IF:<{
+        s2 s2 s1 XCPU2
+        job::unique CALLDICT
+        s0 s2 XCHG
+      }>
+      INC
+    }>
+    2DROP
+    DUP
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+  }>
+  job::get_address_from_number_tuple PROC:<{
+    storage::load_data INLINECALLDICT
+    s5 s8 XCHG
+    8 BLKDROP
+    NIL
+    -ROT
+    job::tuple_status_check CALLDICT
+    0 PUSHINT
+    OVER
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+    WHILE:<{
+      OVER
+      TLEN
+      s1 s(-1) PUXC
+      LESS
+    }>DO<{
+      2DUP
+      INDEXVAR
+      job::get_address_from_validator CALLDICT
+      s1 s3 XCHG
+      TPUSH
+      s0 s2 XCHG
+      INC
+    }>
+    2DROP
+    DUP
+    TLEN
+    5 EQINT
+    400 THROWIFNOT
+  }>
+  job::create PROC:<{
+    storage::load_data INLINECALLDICT
+    s4 PUSH
+    INC
+    s3 PUSH
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    202 THROWIF
+    s0 s9 XCHG
+    LDGRAMS
+    OVER
+    60000000000 PUSHINT
+    EQUAL
+    300 THROWIFNOT
+    LDMSGADDR
+    LDREF
+    LDREF
+    DROP
+    NEWC
+    STREF
+    ENDC
+    s8 PUSH
+    tuple::test_gen_rand_tuple CALLDICT
+    job::get_address_from_number_tuple CALLDICT
+    TPOP
+    SWAP
+    TPOP
+    SWAP
+    TPOP
+    SWAP
+    TPOP
+    SWAP
+    TPOP
+    NIP
+    0 PUSHINT
+    s0 s0 s0 PUSH3
+    DUP
+    NEWC
+    1 STU
+    1 STU
+    1 STU
+    1 STU
+    1 STU
+    ENDC
+    0 PUSHINT
+    s0 s0 s0 PUSH3
+    DUP
+    NEWC
+    64 STU
+    64 STU
+    64 STU
+    64 STU
+    64 STU
+    ENDC
+    SWAP
+    NEWC
+    STREF
+    STREF
+    ENDC
+    NOW
+    NEWC
+    s0 s10 XCHG2
+    STSLICER
+    s1 s9 XCHG
+    64 STU
+    s0 s9 XCHG2
+    STGRAMS
+    s1 s6 XCHG
+    STREF
+    ENDC
+    NEWC
+    s0 s6 XCHG2
+    STSLICER
+    s0 s7 XCHG2
+    STSLICER
+    ENDC
+    NEWC
+    s0 s3 XCHG2
+    STSLICER
+    SWAP
+    STSLICER
+    s0 s5 XCHG2
+    STSLICER
+    ENDC
+    NEWC
+    STREF
+    s1 s4 XCHG
+    STREF
+    ENDC
+    0 PUSHINT
+    NOW
+    90 ADDCONST
+    NOW
+    s10 PUSH
+    INC
+    NEWC
+    64 STU
+    64 STU
+    64 STU
+    1 STU
+    s1 s4 XCHG
+    STREF
+    s1 s3 XCHG
+    STREF
+    s1 s2 XCHG
+    STREF
+    STREF
+    ENDC
+    s4 PUSH
+    INC
+    3 ROLL
+    64 PUSHINT
+    DICTUSETREF
+    0 PUSHINT
+    NEWC
+    1 STU
+    ENDC
+    s4 PUSH
+    INC
+    3 ROLL
+    64 PUSHINT
+    DICTUSETREF
+    s0 s3 XCHG
+    INC
+    s7 s8 XCHG
+    s6 s7 XCHG
+    s5 s6 XCHG
+    s0 s4 XCHG
+    s1 s3 s5 XCHG3
+    storage::save_data INLINECALLDICT
+  }>
+  job::check_time PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    203 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    DROP
+    NOW
+    SWAP
+    LEQ
+    IFJMP:<{
+      -1 PUSHINT
+    }>
+    0 PUSHINT
+  }>
+  job::check_status PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    203 THROWIFNOT
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    DROP
+    0 EQINT
+    IFJMP:<{
+      -1 PUSHINT
+    }>
+    0 PUSHINT
+  }>
+  job::get_address_by_count PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    s2 s0 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    204 THROWIFNOT
+    s1 s2 XCHG
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    SWAP
+    CTOS
+    s2 PUSH
+    3 GTINT
+    IF:<{
+      DROP
+      LDREF
+      DROP
+      CTOS
+      5 PUSHINT
+      ROT
+      SUB
+      SWAP
+    }>ELSE<{
+      NIP
+    }>
+    LDMSGADDR
+    s0 s2 XCHG
+    DEC
+    REPEAT:<{
+      DROP
+      LDMSGADDR
+      SWAP
+    }>
+    NIP
+  }>
+  job::double_answer PROC:<{
+    s2 POP
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    s2 s0 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    204 THROWIFNOT
+    s1 s2 XCHG
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    NIP
+    LDREF
+    NIP
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    DROP
+    CTOS
+    0 PUSHINT
+    s0 s2 XCHG
+    REPEAT:<{
+      NIP
+      1 LDU
+    }>
+    DROP
+    1 EQINT
+    IFJMP:<{
+      -1 PUSHINT
+    }>
+    0 PUSHINT
+  }>
+  job::complete_job PROC:<{
+    storage::load_data INLINECALLDICT
+    s9 s2 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    204 THROWIFNOT
+    s9 s2 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    64 LDU
+    64 LDU
+    1 LDU
+    NIP
+    LDREF
+    SWAP
+    CTOS
+    LDREF
+    DROP
+    SWAP
+    LDREF
+    LDREF
+    OVER
+    CTOS
+    SWAP
+    LDREF
+    DROP
+    DUP
+    CTOS
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    64 LDU
+    64 LDU
+    64 LDU
+    64 LDU
+    64 LDU
+    DROP
+    5 TUPLE
+    DUP
+    consensus::get_mean CALLDICT
+    0 TUPLE
+    1 PUSHINT
+    5 PUSHINT
+    REPEAT:<{
+      s3 PUSH
+      FIRST
+      s3 s(-1) PUXC
+      math::get_percent CALLDICT
+      s0 s4 XCHG
+      tuple::delete CALLDICT
+      s0 s4 XCHG
+      14 GTINT
+      IF:<{
+        21 s() PUSH
+        OVER
+        job::get_address_by_count CALLDICT
+        DUP
+        REWRITESTDADDR
+        NIP
+        SWAP
+        20000000000 PUSHINT
+        consensus::penalty CALLDICT
+        s0 s2 XCHG
+        s0 17 s() XCHG
+        8 PUSHPOW2
+        DICTUSETREF
+      }>ELSE<{
+        21 s() PUSH
+        OVER
+        job::get_address_by_count CALLDICT
+        s1 s2 XCHG
+        TPUSH
+        s0 s15 XCHG2
+      }>
+      s0 s15 XCHG
+      INC
+    }>
+    DROP
+    s2 POP
+    OVER
+    TLEN
+    REPEAT:<{
+      OVER
+      FIRST
+      DUP
+      REWRITESTDADDR
+      NIP
+      s0 s3 XCHG
+      tuple::delete CALLDICT
+      SWAP
+      10000000000 PUSHINT
+      consensus::reward CALLDICT
+      s0 s3 s15 XCHG3
+      8 PUSHPOW2
+      DICTUSETREF
+      s0 s13 XCHG
+    }>
+    NIP
+    s0 s5 XCHG
+    NEWC
+    STREF
+    s5 s(-1) PUXC
+    64 STU
+    ENDC
+    1 PUSHINT
+    19 s() PUSH
+    NEWC
+    64 STU
+    s1 s9 XCHG
+    64 STU
+    s1 s7 XCHG
+    64 STU
+    s1 s7 XCHG
+    1 STU
+    s1 s5 XCHG
+    STREF
+    s1 s2 XCHG
+    STREF
+    STREF
+    s1 s3 XCHG
+    STREF
+    ENDC
+    s0 s3 s6 XCHG3
+    64 PUSHINT
+    DICTUSETREF
+    s8 s10 XCHG
+    5 6 REVERSE
+    s5 s9 XCHG
+    s4 s10 XCHG
+    s3 s9 XCHG
+    s9 s2 XCHG2
+    storage::save_data INLINECALLDICT
+    LDMSGADDR
+    64 LDU
+    NIP
+    LDGRAMS
+    LDREF
+    DROP
+    CTOS
+    NEWC
+    SWAP
+    STSLICER
+    ENDC
+    NOW
+    NEWC
+    s4 PUSH
+    STSLICER
+    64 STU
+    ROT
+    STGRAMS
+    STREF
+    s1 s3 XCHG
+    64 STU
+    64 STU
+    ENDC
+    0 PUSHINT
+    24 PUSHINT
+    NEWC
+    6 STU
+    s0 s3 XCHG2
+    STSLICER
+    s2 PUSH
+    STGRAMS
+    s1 s2 XCHG
+    107 STU
+    s1 s(-1) PUXC
+    STREF
+    SWAP
+    CTOS
+    STSLICER
+    ENDC
+    64 PUSHINT
+    SENDRAWMSG
+  }>
+  job::check_to_complete_job PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    2DUP
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    204 THROWIFNOT
+    s1 s(-1) PUXC
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    64 LDU
+    NIP
+    1 LDU
+    NIP
+    LDREF
+    NIP
+    LDREF
+    NIP
+    LDREF
+    NIP
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    DROP
+    CTOS
+    0 PUSHINT
+    5 PUSHINT
+    REPEAT:<{
+      SWAP
+      1 LDU
+      -ROT
+      ADD
+    }>
+    NIP
+    5 EQINT
+    IFJMP:<{
+      job::complete_job CALLDICT
+    }>
+    DROP
+  }>
+  job::add_result PROC:<{
+    s2 POP
+    storage::load_data INLINECALLDICT
+    s9 s2 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    204 THROWIFNOT
+    s9 s2 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    CTOS
+    64 LDU
+    64 LDU
+    64 LDU
+    1 LDU
+    LDREF
+    LDREF
+    OVER
+    CTOS
+    LDREF
+    SWAP
+    CTOS
+    0 PUSHINT
+    DUP
+    3 PUSHINT
+    REPEAT:<{
+      s0 s2 XCHG
+      LDMSGADDR
+      s0 s3 XCHG
+      INC
+      23 s() PUSH
+      ROT
+      SDEQ
+      IF:<{
+        NIP
+        DUP
+      }>
+    }>
+    s2 POP
+    s0 s2 XCHG
+    LDREF
+    DROP
+    CTOS
+    2 PUSHINT
+    REPEAT:<{
+      LDMSGADDR
+      s0 s2 XCHG
+      INC
+      22 s() PUSH
+      ROT
+      SDEQ
+      IF:<{
+        s2 POP
+        OVER
+      }>
+      SWAP
+    }>
+    2DROP
+    19 s() POP
+    LDREF
+    LDREF
+    DROP
+    CTOS
+    LDREF
+    SWAP
+    CTOS
+    NEWC
+    21 s() PUSH
+    DEC
+    REPEAT:<{
+      SWAP
+      1 LDU
+      s0 s2 XCHG
+      1 STU
+    }>
+    SWAP
+    1 LDU
+    1 PUSHINT
+    s2 POP
+    s0 s2 XCHG
+    1 STU
+    5 PUSHINT
+    22 s() PUSH
+    SUB
+    REPEAT:<{
+      SWAP
+      1 LDU
+      s0 s2 XCHG
+      1 STU
+    }>
+    NIP
+    SWAP
+    LDREF
+    DROP
+    CTOS
+    NEWC
+    21 s() PUSH
+    DEC
+    REPEAT:<{
+      SWAP
+      64 LDU
+      s0 s2 XCHG
+      64 STU
+    }>
+    SWAP
+    64 LDU
+    NIP
+    s0 20 s() XCHG
+    SWAP
+    64 STU
+    5 PUSHINT
+    SWAP
+    s0 21 s() XCHG
+    SUB
+    REPEAT:<{
+      s0 18 s() XCHG
+      64 LDU
+      s0 20 s() XCHG
+      64 STU
+      s0 19 s() XCHG
+      s0 18 s() XCHG
+    }>
+    18 s() POP
+    s0 17 s() XCHG
+    ENDC
+    s0 18 s() XCHG
+    ENDC
+    s0 18 s() XCHG
+    NEWC
+    STREF
+    s1 18 s() XCHG
+    STREF
+    ENDC
+    s5 PUSH
+    NEWC
+    64 STU
+    s1 s5 XCHG
+    64 STU
+    s1 s3 XCHG
+    64 STU
+    1 STU
+    STREF
+    s1 s14 XCHG
+    STREF
+    s1 s12 XCHG
+    STREF
+    s1 s12 XCHG
+    STREF
+    ENDC
+    s10 s2 XCHG2
+    64 PUSHINT
+    DICTUSETREF
+    2 7 BLKSWAP
+    s0 s9 XCHG
+    storage::save_data INLINECALLDICT
+    job::check_to_complete_job CALLDICT
+  }>
+  job::add PROC:<{
+    storage::load_data INLINECALLDICT
+    s2 s8 XCHG
+    8 BLKDROP
+    SWAP
+    64 LDU
+    64 LDU
+    DROP
+    s1 s2 PUSH2
+    64 PUSHINT
+    DICTUGETOPTREF
+    s3 POP
+    s0 s2 XCHG
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    203 THROWIFNOT
+    DUP
+    job::check_status CALLDICT
+    204 THROWIFNOT
+    s2 s0 PUSH2
+    job::ownership_check CALLDICT
+    SWAP
+    205 THROWIFNOT
+    OVER
+    job::check_time CALLDICT
+    206 THROWIFNOT
+    s3 s0 s1 PUSH3
+    job::double_answer CALLDICT
+    207 THROWIF
+    OVER
+    job::check_time CALLDICT
+    NOT
+    IFJMP:<{
+      3 BLKDROP
+      15000000000 PUSHINT
+      consensus::penalty CALLDICT
+      DROP
+    }>
+    s0 s2 XCHG
+    job::add_result CALLDICT
+  }>
+  reg::add PROC:<{
+    storage::load_data INLINECALLDICT
+    s0 s9 XCHG
+    LDGRAMS
+    LDMSGADDR
+    DROP
+    OVER
+    30000000000000 PUSHINT
+    EQUAL
+    99 THROWIFNOT
+    DUP
+    REWRITESTDADDR
+    NIP
+    0 PUSHINT
+    s1 s6 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    IF:<{
+      DROP
+      s0 s5 PUSH2
+      8 PUSHPOW2
+      DICTUGETOPTREF
+      CTOS
+      LDMSGADDR
+      NIP
+      2 LDU
+      SWAP
+      2 NEQINT
+      IF:<{
+        s1 s6 PUSH2
+        8 PUSHPOW2
+        DICTUGETOPTREF
+        <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+        100 THROWIF
+      }>
+      64 LDU
+      NIP
+      LDGRAMS
+      NIP
+      64 LDU
+      DROP
+    }>
+    DUP
+    0 EQINT
+    IF:<{
+      DROP
+      s7 PUSH
+    }>
+    1000 PUSHINT
+    NOW
+    0 PUSHINT
+    NEWC
+    s6 PUSH
+    STSLICER
+    2 STU
+    64 STU
+    s0 s5 XCHG2
+    STGRAMS
+    s1 s(-1) PUXC
+    64 STU
+    s1 s4 XCHG
+    64 STU
+    ENDC
+    s0 s1 s6 XCHG3
+    8 PUSHPOW2
+    DICTUSETREF
+    0 PUSHINT
+    NEWC
+    2 STU
+    s0 s5 XCHG2
+    STSLICER
+    s1 s(-1) PUXC
+    64 STU
+    ENDC
+    s0 s0 s10 XCPUXC
+    64 PUSHINT
+    DICTUSETREF
+    s9 s5 XCPU
+    NEQ
+    IF:<{
+      8 ROLL
+      storage::save_data INLINECALLDICT
+    }>ELSE<{
+      s0 s4 XCHG
+      INC
+      s7 s8 XCHG
+      s6 s7 XCHG
+      s0 s5 XCHG
+      s0 s6 XCHG
+      s3 s4 XCHG
+      s1 s3 s0 XCHG3
+      storage::save_data INLINECALLDICT
+    }>
+  }>
+  reg::pause PROC:<{
+    storage::load_data INLINECALLDICT
+    s0 s9 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    101 THROWIFNOT
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    SWAP
+    0 EQINT
+    102 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    1 PUSHINT
+    NEWC
+    s6 PUSH
+    STSLICER
+    2 STU
+    s1 s4 XCHG
+    64 STU
+    ROT
+    STGRAMS
+    s1 s(-1) PUXC
+    64 STU
+    s1 s2 XCHG
+    64 STU
+    ENDC
+    s0 s3 s6 XCHG3
+    8 PUSHPOW2
+    DICTUSETREF
+    1 PUSHINT
+    NEWC
+    2 STU
+    s0 s5 XCHG2
+    STSLICER
+    s1 s(-1) PUXC
+    64 STU
+    ENDC
+    s0 s1 s10 XCHG3
+    64 PUSHINT
+    DICTUSETREF
+    s7 s8 XCHG
+    s6 s7 XCHG
+    s5 s6 XCHG
+    s4 s5 XCHG
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    storage::save_data INLINECALLDICT
+  }>
+  reg::delete PROC:<{
+    storage::load_data INLINECALLDICT
+    s0 s9 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    102 THROWIFNOT
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    SWAP
+    0 EQINT
+    103 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    2 PUSHINT
+    NEWC
+    s6 PUSH
+    STSLICER
+    2 STU
+    s1 s4 XCHG
+    64 STU
+    ROT
+    STGRAMS
+    s1 s(-1) PUXC
+    64 STU
+    s1 s2 XCHG
+    64 STU
+    ENDC
+    s0 s3 s6 XCHG3
+    8 PUSHPOW2
+    DICTUSETREF
+    2 PUSHINT
+    NEWC
+    2 STU
+    s0 s5 XCHG2
+    STSLICER
+    s1 s(-1) PUXC
+    64 STU
+    ENDC
+    s0 s1 s10 XCHG3
+    64 PUSHINT
+    DICTUSETREF
+    s7 s8 XCHG
+    s6 s7 XCHG
+    s5 s6 XCHG
+    s4 s5 XCHG
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    storage::save_data INLINECALLDICT
+  }>
+  reg::unpause PROC:<{
+    storage::load_data INLINECALLDICT
+    s0 s9 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    101 THROWIFNOT
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    SWAP
+    1 EQINT
+    102 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    0 PUSHINT
+    NEWC
+    s6 PUSH
+    STSLICER
+    2 STU
+    s1 s4 XCHG
+    64 STU
+    ROT
+    STGRAMS
+    s1 s(-1) PUXC
+    64 STU
+    s1 s2 XCHG
+    64 STU
+    ENDC
+    s0 s3 s6 XCHG3
+    8 PUSHPOW2
+    DICTUSETREF
+    0 PUSHINT
+    NEWC
+    2 STU
+    s0 s5 XCHG2
+    STSLICER
+    s1 s(-1) PUXC
+    64 STU
+    ENDC
+    s0 s1 s10 XCHG3
+    64 PUSHINT
+    DICTUSETREF
+    s7 s8 XCHG
+    s6 s7 XCHG
+    s5 s6 XCHG
+    s4 s5 XCHG
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    storage::save_data INLINECALLDICT
+  }>
+  reg::getStake PROC:<{
+    storage::load_data INLINECALLDICT
+    s0 s9 XCHG
+    REWRITESTDADDR
+    NIP
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    <{ TRY:<{ CTOS DROP -1 PUSHINT }>CATCH<{ 2DROP 0 PUSHINT }> }>CONT 1 1 CALLXARGS
+    101 THROWIFNOT
+    s0 s3 PUSH2
+    8 PUSHPOW2
+    DICTUGETOPTREF
+    CTOS
+    LDMSGADDR
+    2 LDU
+    64 LDU
+    NIP
+    LDGRAMS
+    64 LDU
+    64 LDU
+    DROP
+    s0 s3 XCHG
+    2 EQINT
+    102 THROWIFNOT
+    OVER
+    0 NEQINT
+    103 THROWIFNOT
+    0 PUSHINT
+    2 PUSHINT
+    NEWC
+    s6 PUSH
+    STSLICER
+    2 STU
+    64 STU
+    0 PUSHINT
+    STGRAMS
+    64 STU
+    s1 s2 XCHG
+    64 STU
+    ENDC
+    s0 s3 s6 XCHG3
+    8 PUSHPOW2
+    DICTUSETREF
+    1 PUSHINT
+    NEWDICT
+    0 PUSHINT
+    0xf8a7ea5 PUSHINT
+    NEWC
+    32 STU
+    64 STU
+    s0 s4 XCHG2
+    STGRAMS
+    s0 s6 XCHG2
+    STSLICER
+    b{00} PUSHSLICE
+    STSLICER
+    s1 s2 XCHG
+    STDICT
+    0 PUSHINT
+    STGRAMS
+    s1 s4 XCHG
+    64 STU
+    ENDC
+    0 PUSHINT
+    24 PUSHINT
+    NEWC
+    6 STU
+    s10 PUSH
+    STSLICER
+    OVER
+    STGRAMS
+    107 STU
+    s1 s(-1) PUXC
+    STREF
+    SWAP
+    CTOS
+    STSLICER
+    ENDC
+    64 PUSHINT
+    SENDRAWMSG
+    8 ROLL
+    storage::save_data INLINECALLDICT
+  }>
+  admin::change_jettonWallet PROC:<{
+    storage::load_data INLINECALLDICT
+    s8 POP
+    s8 s5 XCPU
+    SDEQ
+    500 THROWIFNOT
+    s0 s8 XCHG
+    LDMSGADDR
+    DROP
+    s0 s8 XCHG
+    2 6 BLKSWAP
+    storage::save_data INLINECALLDICT
+  }>
+  admin::change_jettonMinter PROC:<{
+    storage::load_data INLINECALLDICT
+    s7 POP
+    s8 s5 XCPU
+    SDEQ
+    500 THROWIFNOT
+    s0 s8 XCHG
+    LDMSGADDR
+    DROP
+    s6 s8 XCHG
+    s0 s7 XCHG
+    s4 s6 XCHG
+    s3 s5 XCHG
+    s4 s0 s3 XCHG3
+    storage::save_data INLINECALLDICT
+  }>
+  recv_internal PROC:<{
+    2 2 BLKDROP2
+    storage::load_data INLINECALLDICT
+    8 BLKDROP
+    s0 s2 XCHG
+    utils::parse_sender_address CALLDICT
+    SWAP
+    32 LDU
+    64 LDU
+    0x7362d09c PUSHINT
+    s3 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      s2 POP
+      40 PUSHINT
+      s1 s(-1) PUXC
+      EQUAL
+      s3 s4 PUSH2
+      SDEQ
+      AND
+      IFJMP:<{
+        s1 s3 XCHG
+        3 BLKDROP
+        reg::add CALLDICT
+      }>
+      50 PUSHINT
+      EQUAL
+      s2 s3 XCHG2
+      SDEQ
+      s1 s2 XCHG
+      AND
+      IFJMP:<{
+        job::create CALLDICT
+      }>
+      DROP
+    }>
+    NIP
+    s3 POP
+    210 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      admin::change_jettonWallet CALLDICT
+    }>
+    220 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      admin::change_jettonMinter CALLDICT
+    }>
+    130 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      NIP
+      reg::unpause CALLDICT
+    }>
+    140 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      NIP
+      reg::pause CALLDICT
+    }>
+    150 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      NIP
+      reg::delete CALLDICT
+    }>
+    170 PUSHINT
+    s1 s(-1) PUXC
+    EQUAL
+    IFJMP:<{
+      DROP
+      NIP
+      reg::getStake CALLDICT
+    }>
+    160 PUSHINT
+    EQUAL
+    IFJMP:<{
+      SWAP
+      job::add CALLDICT
+    }>
+    2DROP
+    16 PUSHPOW2DEC
+    THROWANY
+  }>
+}END>c

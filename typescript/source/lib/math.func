@@ -1,0 +1,18 @@
+int math::get_min(tuple a, int index) impure {
+        int min = a~tpop();
+        repeat(index - 1){
+                int temp = a~tpop();
+                if(temp < min) { min = temp; }
+        }
+        return min;
+}
+
+int math::get_percent(int a, int b) impure {
+        int res = 0;
+        if(a > b){
+                res = (a / b - 1) * 100;
+        } else {
+                res = (b / a - 1) * 100;
+        }
+        return res;
+}
