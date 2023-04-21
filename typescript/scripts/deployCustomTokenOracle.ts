@@ -1,6 +1,6 @@
 import { beginCell, Cell, TupleBuilder } from "ton-core";
 import fs from "fs";
-import Tonlink from "../tests/contract";
+import Tonlink from "../tests/CustomTokenOracle/contract";
 import { getHttpEndpoint } from "@orbs-network/ton-access"
 import { mnemonicToWalletKey } from "ton-crypto";
 import { WalletContractV3R2, internal } from "ton";

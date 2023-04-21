@@ -1,0 +1,481 @@
+() do_break() impure asm "RETALT";
+forall X -> X getByIndex(tuple t, int index) asm "INDEXVAR";
+(int, int) job::ownership_check(slice address, int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(201, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        job~load_ref();
+        slice addressCell = (job~load_ref()).begin_parse();
+        slice addressSlice1 = (addressCell~load_ref()).begin_parse();
+        int count = 0;
+        repeat(3){
+                slice temp = addressSlice1~load_msg_addr();
+                count = count + 1;
+                if(equal_slices(address, temp)){ return (-1, count); }
+        }
+        slice addressSlice2 = (addressCell~load_ref()).begin_parse();
+        repeat(2){
+                slice temp = addressSlice2~load_msg_addr();
+                count = count + 1;
+                if(equal_slices(address, temp)){ return (-1, count); }
+        }
+        return (0, 0);
+}
+
+int job::get_random_number(int max) impure {
+        randomize_lt();
+        ;;int temp = ;
+        return rand(max);
+}
+
+tuple job::get_random_tuple(int max) impure {
+        tuple tuple_int = empty_tuple();
+        repeat(5){
+                tuple_int = tuple_int.tpush(job::get_random_number(max));
+        }
+        return tuple_int;
+}
+
+int job::get_status_from_validator(int number) {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+
+        throw_unless(800, check_slice_for_empty?(provider_list_for_choising.udict_get_maybe_ref(64, number)));
+        slice temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, number)).begin_parse();
+        int tempStatus = temp_address~load_uint(2);
+        return tempStatus;
+}
+
+slice job::get_address_from_validator(int number) {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+
+        throw_unless(800, check_slice_for_empty?(provider_list_for_choising.udict_get_maybe_ref(64, number)));
+        slice temp_address = (provider_list_for_choising.udict_get_maybe_ref(64, number)).begin_parse();
+        temp_address~load_uint(2);
+        return temp_address~load_msg_addr();
+}
+
+tuple job::unique(tuple inp, int i_pos, int max_provider) {
+        int uniq = 0;
+        while(uniq == 0) {
+                do {
+                        inp = tuple::replace(inp, i_pos, job::get_random_number(max_provider));
+                } until(job::get_status_from_validator(inp.getByIndex(i_pos)) == 0);
+        
+                int i = 0;
+
+                while(i < 5){
+                        if ((inp.getByIndex(i_pos) == inp.getByIndex(i)) & (i != i_pos)) {
+                                uniq = 0; 
+                                do_break(); 
+                        } else { 
+                                uniq = 1; 
+                        }
+                        i += 1;
+                }
+        }
+        throw_unless(400, inp.tuple_length() == 5);
+        return inp;
+}
+
+tuple job::tuple_status_check(tuple inp, int max_provider) impure {
+        int i = 0;
+        while(i < inp.tuple_length()){
+                if (job::get_status_from_validator(inp.getByIndex(i)) != 0) { 
+                        inp = job::unique(inp, i, max_provider);
+                }
+                i += 1;
+        }
+        throw_unless(400, inp.tuple_length() == 5);
+        return inp;
+}
+
+tuple job::get_address_from_number_tuple(tuple a) {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+
+        tuple res = empty_tuple();
+        a = job::tuple_status_check(a, max_provider);
+        int i = 0;
+        throw_unless(400, a.tuple_length() == 5);
+        while(i < a.tuple_length()) {
+                
+                res = res.tpush(job::get_address_from_validator(a.getByIndex(i)));
+                i += 1;
+        }
+        throw_unless(400, res.tuple_length() == 5);
+        return res;       
+}
+
+() job::create(slice full_msg, slice who, int value_input) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_if(202, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, last_job_id + 1)));
+        {-
+                msg_body
+                        int                     value
+                        slice                   who
+                        slice                   msg
+                                cell            orig
+                                cell            content
+        -}
+
+        throw_unless(300, value_input == 60000000000);
+
+        cell msg = full_msg~load_ref();
+        cell link = full_msg~load_ref();
+        cell content = begin_cell()
+                .store_ref(link)
+        .end_cell();
+        tuple number_tuple = tuple::test_gen_rand_tuple(max_provider);
+        tuple tuple_address = job::get_address_from_number_tuple(number_tuple);
+        slice addr0 = tuple_address~tpop();
+        slice addr1 = tuple_address~tpop();
+        slice addr2 = tuple_address~tpop();
+        slice addr3 = tuple_address~tpop();
+        slice addr4 = tuple_address~tpop();
+        var stat_cell = begin_cell()
+                .store_uint(0, 1)
+                .store_uint(0, 1)
+                .store_uint(0, 1)
+                .store_uint(0, 1)
+                .store_uint(0, 1)
+        .end_cell();
+
+        var res_cell = begin_cell()
+                .store_uint(0, 64)
+                .store_uint(0, 64)
+                .store_uint(0, 64)
+                .store_uint(0, 64)
+                .store_uint(0, 64)
+        .end_cell();
+        var new_job = begin_cell()
+                .store_uint(last_job_id + 1, 64)
+                .store_uint(now(), 64)
+                .store_uint(now() + 90, 64)
+                .store_uint(0, 1)
+                .store_ref(content)
+                .store_ref(begin_cell()
+                        .store_ref(
+                                begin_cell()
+                                        .store_slice(addr0)
+                                        .store_slice(addr1)
+                                        .store_slice(addr2)
+                                .end_cell()
+                        )
+                        .store_ref(
+                                begin_cell()
+                                        .store_slice(addr3)
+                                        .store_slice(addr4)
+                                .end_cell()
+                        )
+                .end_cell())
+                .store_ref(
+                        begin_cell()
+                                .store_slice(who)
+                                .store_uint(now(), 64)
+                                .store_grams(value_input)
+                                .store_ref(msg)
+                        .end_cell()
+                )
+                .store_ref(
+                        begin_cell()
+                                .store_ref(stat_cell)
+                                .store_ref(res_cell)
+                        .end_cell()
+                )
+        .end_cell();
+        job_list~udict_set_ref(64, last_job_id + 1, new_job);
+
+       var newNot = begin_cell()
+                .store_uint(0, 1)
+        .end_cell();
+        active_jobId~udict_set_ref(64, last_job_id + 1, newNot);
+
+        storage::save_data(admin, max_provider, (last_job_id + 1), provider_list, job_list, active_jobId, provider_list_for_choising);
+        return ();
+}
+
+int job::check_time(int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(203, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        int end_time = job~load_uint(64);
+        if(now() <= end_time){
+                return -1;
+        }
+        return 0;
+}
+
+int job::check_status(int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(203, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        if(job~load_uint(1) == 0){ return -1; }
+        return 0;
+}
+
+slice job::get_address_by_count(int jobID, int count) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(204, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        job~load_ref();
+        slice address_slice = (job~load_ref()).begin_parse();
+        slice address_list = (address_slice~load_ref()).begin_parse();
+        if(count > 3){
+                address_list = (address_slice~load_ref()).begin_parse();
+                count = 5 - count;
+        }
+        slice address = address_list~load_msg_addr();
+        repeat(count - 1){
+                address = address_list~load_msg_addr();
+        }
+        return address;
+}
+
+int job::double_answer(slice address, int count, int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(204, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        job~load_ref();
+        job~load_ref();
+        job~load_ref();
+        slice status_result_slice = (job~load_ref()).begin_parse();
+        slice status_slice = (status_result_slice~load_ref()).begin_parse(); 
+        int status = 0;
+        repeat(count){
+                status = status_slice~load_uint(1);
+        }
+        if(status == 1) { return -1; }
+        return 0;
+}
+
+() job::complete_job(int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(204, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        int jobID_c = job~load_uint(64);
+        int start = job~load_uint(64);
+        int end = job~load_uint(64);
+        int status = job~load_uint(1);
+        cell content = job~load_ref();
+        slice content_slice = content.begin_parse();
+        cell link = content_slice~load_ref();
+        cell address_cell = job~load_ref();
+        cell req_cell = job~load_ref();
+        slice req_slice = req_cell.begin_parse();
+        cell status_result_cell = job~load_ref();
+        cell status_result_for_save = status_result_cell;
+        slice status_result_slice = status_result_cell.begin_parse();
+        slice status_slice = (status_result_slice~load_ref()).begin_parse(); 
+        slice result_slice = (status_result_slice~load_ref()).begin_parse(); 
+        int result0 = result_slice~load_uint(64);
+        int result1 = result_slice~load_uint(64);
+        int result2 = result_slice~load_uint(64);
+        int result3 = result_slice~load_uint(64);
+        int result4 = result_slice~load_uint(64);
+        tuple result = unsafe_tuple([result0, result1, result2, result3, result4]);
+        int mean = consensus::get_mean(result);
+        tuple address_for_reward = unsafe_tuple([]);
+        int count = 1;
+        repeat(5){
+                int b = result.first();
+                int res = math::get_percent(mean, b);
+                result = tuple::delete(result);
+                if((res >= 15)){
+                        slice temp_address = job::get_address_by_count(jobID, count);
+                        var (_, key_addr) = parse_std_addr(temp_address);
+                        cell newProvider_cell = consensus::penalty(temp_address, 20000000000);
+                        provider_list~udict_set_ref(256, key_addr, newProvider_cell);
+                } else {
+                        slice temp_address = job::get_address_by_count(jobID, count);
+                        address_for_reward~tpush(temp_address);
+                }
+                count = count + 1;
+        }
+        repeat(address_for_reward.tuple_length()){
+                slice temp = address_for_reward.first();
+                var (_, key_addr) = parse_std_addr(temp);
+                address_for_reward = tuple::delete(address_for_reward);
+                cell newProvider_cell = consensus::reward(temp, 10000000000);
+                provider_list~udict_set_ref(256, key_addr, newProvider_cell);
+        }
+
+        var new_job = begin_cell()
+                .store_uint(jobID, 64)
+                .store_uint(start, 64)
+                .store_uint(end, 64)
+                .store_uint(1, 1)
+                .store_ref(begin_cell()
+                        .store_ref(link)
+                        .store_uint(mean, 64)
+                .end_cell())
+                .store_ref(address_cell)
+                .store_ref(req_cell)
+                .store_ref(status_result_for_save)
+        .end_cell();
+
+        job_list~udict_set_ref(64, jobID_c, new_job);
+        storage::save_data(admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+        
+        slice who = req_slice~load_msg_addr();
+        int time = req_slice~load_uint(64);
+        int value = req_slice~load_grams();
+        slice msg = (req_slice~load_ref()).begin_parse();
+        var msg_to_client = begin_cell()
+                .store_slice(who)
+                .store_uint(now(), 64)
+                .store_grams(value)
+                .store_ref(begin_cell().store_slice(msg).end_cell())
+                .store_uint(jobID, 64)
+                .store_uint(mean, 64)
+        .end_cell();
+
+        var full_msg_to_client = begin_cell()
+              .store_uint(0x18, 6)
+              .store_slice(who)
+              .store_grams(0)
+              .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+              .store_ref(msg_to_client)
+              .store_slice(msg_to_client.begin_parse())
+        .end_cell();
+        send_raw_message(full_msg_to_client, 64);
+        return ();
+}
+
+() job::check_to_complete_job(int jobID) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(204, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(64);
+        job~load_uint(1);
+        job~load_ref();
+        job~load_ref();
+        job~load_ref();
+        slice status_result_slice = (job~load_ref()).begin_parse();
+        slice status_slice = (status_result_slice~load_ref()).begin_parse();
+        int summ = 0;
+        repeat(5){
+                int temp_status = status_slice~load_uint(1);
+                summ = summ + temp_status;
+        }
+        if(summ == 5) { job::complete_job(jobID); return (); }
+        else { return (); }
+}
+
+() job::add_result(slice address, int count, int jobID, int result) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        throw_unless(204, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        int jobID_c = job~load_uint(64);
+        int startTime_c = job~load_uint(64);
+        int endTime_c = job~load_uint(64);
+        int status_c = job~load_uint(1);
+        cell content = job~load_ref();
+        cell addressCell = job~load_ref();
+        slice addresSlice = addressCell.begin_parse();
+        cell addressCell_for_save = addressCell;
+        slice addressSlice1 = (addresSlice~load_ref()).begin_parse();
+        int count = 0;
+        int temp_count = 0;
+        repeat(3){
+                slice temp = addressSlice1~load_msg_addr();
+                temp_count = temp_count + 1;
+                if(equal_slices(address, temp)){ count = temp_count; }
+        }
+        slice addressSlice2 = (addresSlice~load_ref()).begin_parse();
+        repeat(2){
+                slice temp = addressSlice2~load_msg_addr();
+                temp_count = temp_count + 1;
+                if(equal_slices(address, temp)){ count = temp_count; }
+        }
+        cell original_msg = job~load_ref();
+        cell status_result_cell = job~load_ref();
+        slice status_result_slice = status_result_cell.begin_parse();
+        slice status_slice = (status_result_slice~load_ref()).begin_parse();
+        var newStatus_cell = begin_cell();
+        repeat(count - 1){
+               int temp_status = status_slice~load_uint(1);
+               newStatus_cell = newStatus_cell.store_uint(temp_status, 1);
+        }
+        status_slice~load_uint(1);
+        newStatus_cell = newStatus_cell.store_uint(1, 1);
+        repeat(5 - count){
+                int temp_status = status_slice~load_uint(1);
+                newStatus_cell = newStatus_cell.store_uint(temp_status, 1);
+        }
+
+        slice result_slice = (status_result_slice~load_ref()).begin_parse();
+        var newResult_cell = begin_cell();
+        repeat(count - 1){
+               int temp_result = result_slice~load_uint(64);
+               newResult_cell = newResult_cell.store_uint(temp_result, 64);
+        }
+        result_slice~load_uint(64);
+        newResult_cell = newResult_cell.store_uint(result, 64);
+        repeat(5 - count){
+                int temp_result = result_slice~load_uint(64);
+                newResult_cell = newResult_cell.store_uint(temp_result, 64);
+        }
+        
+        cell new_status_cell = newStatus_cell.end_cell();
+        cell new_result_cell = newResult_cell.end_cell();
+
+        var new_status_result_cell = begin_cell()
+                .store_ref(new_status_cell)
+                .store_ref(new_result_cell)
+        .end_cell();
+
+        var new_job = begin_cell()
+                .store_uint(jobID_c,64)
+                .store_uint(startTime_c,64)
+                .store_uint(endTime_c,64)
+                .store_uint(status_c,1)
+                .store_ref(content)
+                .store_ref(addressCell_for_save)
+                .store_ref(original_msg)
+                .store_ref(new_status_result_cell)
+        .end_cell();
+
+        job_list~udict_set_ref(64, jobID_c, new_job);
+
+        storage::save_data(admin, max_provider, last_job_id, provider_list, job_list, active_jobId, provider_list_for_choising);
+
+        job::check_to_complete_job(jobID);
+        return ();
+}
+
+() job::add(slice address, slice msg) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+        int jobID = msg~load_uint(64);
+        int result = msg~load_uint(64);
+        throw_unless(203, check_slice_for_empty?(job_list.udict_get_maybe_ref(64, jobID)));
+        slice job = (job_list.udict_get_maybe_ref(64, jobID)).begin_parse();
+        throw_unless(204, job::check_status(jobID));
+        (int res, int place)= job::ownership_check(address, jobID);
+        throw_unless(205, res);
+        throw_unless(206, job::check_time(jobID));
+        throw_if(207, job::double_answer(address, place, jobID));
+        if(~ job::check_time(jobID)) {
+                consensus::penalty(address, 15000000000);
+                return ();
+        }
+        job::add_result(address, place, jobID, result);
+        return ();
+}

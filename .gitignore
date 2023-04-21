@@ -1,3 +1,4 @@
 /build
+/output
 typescript/node_modules
 typescript/mochawesome-report
