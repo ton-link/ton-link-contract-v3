@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha --reporter mochawesome -r ts-node/register 'tests/**/*.ts'",
     "build": "./scripts/build.sh",
-    "deployNative": "ts-node scripts/deployNativeOracle.ts"
-    "deployToken": "ts-node scripts/deployCustomTokenOracle.ts"
+    "deployNativeOracle": "ts-node scripts/deployNativeOracle.ts"
+    "deployTokenOracle": "ts-node scripts/deployCustomTokenOracle.ts"
   },
   "repository": {
     "type": "git",
