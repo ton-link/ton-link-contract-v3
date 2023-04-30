@@ -75,30 +75,6 @@ async function deploy() {
                         secretKey: key.secretKey,
                         sendMode: SendMode.PAY_GAS_SEPARATLY + SendMode.IGNORE_ERRORS,
                 });
-                console.log("change jw")
-
-                const jettonWallet = await getJWFromMinter(client, Address.parse(mainContract.toString()), Address.parse(jMinter.toString()))
-                const messageBody = beginCell()
-                        .storeUint(210, 32)
-                        .storeUint(0, 64)
-                        .storeAddress(jettonWallet)
-                .endCell();
-
-                seqno = await contract.getSeqno(); 
-                const transfer2 = contract.createTransfer({
-                        seqno,
-                        messages: [
-                                internal({
-                                        to: mainContract.toString(),
-                                        value: '0.07',
-                                        bounce: false,
-                                        body: messageBody
-                                }),
-                        ],
-                        secretKey: key.secretKey,
-                        sendMode: SendMode.PAY_GAS_SEPARATLY + SendMode.IGNORE_ERRORS,
-                });
-
                 await client.sendExternalMessage(wallet, transfer); //DEPLOY
         } catch (e) {
                 console.log(e)

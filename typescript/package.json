@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --reporter mochawesome -r ts-node/register 'tests/**/*.ts'",
     "build": "./scripts/build.sh",
-    "deployNativeOracle": "ts-node scripts/deployNativeOracle.ts"
+    "deployNativeOracle": "ts-node scripts/deployNativeOracle.ts",
     "deployTokenOracle": "ts-node scripts/deployCustomTokenOracle.ts"
   },
   "repository": {
