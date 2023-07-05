@@ -1,0 +1,30 @@
+{-
+	@title: ton-link decentralized network
+	@custom: version 3.0
+	@author Konstantin Klyuchnikov (knstntn.asuoki.eth)
+-}
+
+#include "storage.func";
+#include "utils/utils.func";
+#include "lib/codes.func";
+#include "lib/get.func";
+#include "lib/math.func";
+#include "lib/tuple.func";
+#include "lib/consensus.func";
+#include "lib/job.func";
+#include "lib/registration.func";
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+        (slice admin, int max_provider, int last_job_id, cell provider_list, cell job_list, cell active_jobId, cell provider_list_for_choising) = storage::load_data();
+	slice sender_address = utils::parse_sender_address(in_msg_full);
+	int op = in_msg_body~load_uint(32);
+	int query_id = in_msg_body~load_uint(64);
+	if(op == query::reg::add()) { reg::add(in_msg_body, sender_address, msg_value); return (); }
+	if(op == query::job::create()){ job::create(in_msg_body, sender_address, msg_value); return (); }
+	if(op == op::reg::unpause()){ reg::unpause(sender_address); return (); }
+	if(op == op::reg::pause()){ reg::pause(sender_address); return (); }
+	if(op == op::reg::delete()){ reg::delete(sender_address); return (); }
+	if(op == op::reg::getStake()){ reg::getStake(sender_address); return (); }
+	if(op == op::job::add()){ job::add(sender_address, in_msg_body); return (); }
+	throw(0xffff);
+}

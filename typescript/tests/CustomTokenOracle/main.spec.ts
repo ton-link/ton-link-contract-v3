@@ -9,14 +9,11 @@ import {
         flattenTransaction
 } from './transaction';
  
-describe("ton-link-v3 tests", async () => {
+describe("ton-link-v3-custom tests", async () => {
         let blockchain = await Blockchain.create();
         let tonlinkContract: OpenedContract<Tonlink>;
         let tonlinkContractForError: OpenedContract<Tonlink>;
         let blockchainForErr = await Blockchain.create();
-
-        /*let deployerForErr = await blockchainForErr.treasury("deployer");
-        let walletForErr = await blockchainForErr.treasury("wallet");*/
 
         let deployer = await blockchain.treasury("deployer");
         let wallet = await blockchain.treasury("wallet");
@@ -60,9 +57,9 @@ describe("ton-link-v3 tests", async () => {
         let validatorArrayOrig: Array<OpenedContract<TreasuryContract>> = [val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12, val13, val14]
         let validatorArrayOrigForErr: Array<OpenedContract<TreasuryContract>> = [val2ForErr, val3ForErr, val4ForErr, val5ForErr, val6ForErr, val7ForErr, val8ForErr]//, val9ForErr, val10ForErr, val11ForErr, val12ForErr, val13ForErr, val14ForErr]
 
-        describe("ton-link-v3 init tests", () => {
+        describe("ton-link-v3-custom init tests", () => {
                 beforeEach(async () =>  {
-                        const tonlinkCode = Cell.fromBoc(fs.readFileSync("./output/ton-link.cell"))[0]; 
+                        const tonlinkCode = Cell.fromBoc(fs.readFileSync("./output/ton-link-token.cell"))[0]; 
                         const tonlink = Tonlink.createForDeploy(tonlinkCode, wallet.address, minter.address, my.address);
                         tonlinkContract = blockchain.openContract(tonlink);
                         await tonlinkContract.sendDeploy(deployer.getSender());
@@ -77,9 +74,9 @@ describe("ton-link-v3 tests", async () => {
                 });
         });
 
-        describe("ton-link-v3 error module", async () => {
+        describe("ton-link-v3-custom error module", async () => {
                 beforeEach(async () =>  {
-                        const tonlinkCode = Cell.fromBoc(fs.readFileSync("./output/ton-link.cell"))[0]; 
+                        const tonlinkCode = Cell.fromBoc(fs.readFileSync("./output/ton-link-token.cell"))[0]; 
                         const tonlink = Tonlink.createForDeploy(tonlinkCode, wallet.address, minter.address, my.address);
                         tonlinkContractForError = blockchainForErr.openContract(tonlink);
                         await tonlinkContractForError.sendDeploy(deployerForErr.getSender());
@@ -506,7 +503,7 @@ describe("ton-link-v3 tests", async () => {
 
         
         
-        describe("ton-link-v3 registration tests", async () => {
+        describe("ton-link-v3-custom registration tests", async () => {
                 it("Registration of 1 validator", async () => {
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
@@ -569,7 +566,7 @@ describe("ton-link-v3 tests", async () => {
                 })
         }); 
             
-        describe("ton-link-v3 registration of all val", async () => {
+        describe("ton-link-v3-custom registration of all val", async () => {
                 it("Registration of 1 validator", async () => {
                         var body = beginCell()
                                 .storeUint(0x7362d09c, 32)
@@ -693,8 +690,8 @@ describe("ton-link-v3 tests", async () => {
                 })
         });
 
-        describe("ton-link-v3 job tests", async () => {
-                describe("ton-link-v3 100% consensus tests",async () => {
+        describe("ton-link-v3-custom job tests", async () => {
+                describe("ton-link-v3-custom 100% consensus tests",async () => {
                         let validatorArray: string[] = [];
                         it("Create job", async () => {
                                 var link = beginCell()
@@ -839,7 +836,7 @@ describe("ton-link-v3 tests", async () => {
                                 expect(content.loadUint(64)).to.equal(5);
                         })
                 });  
-                describe("ton-link-v3 80% consensus tests", async () => {
+                describe("ton-link-v3-custom 80% consensus tests", async () => {
                         let validatorArray: string[] = [];
                         it("Create job", async () => {
                                 var mp = await tonlinkContract.get_max_provider();
@@ -988,7 +985,7 @@ describe("ton-link-v3 tests", async () => {
                                 expect(content.loadUint(64)).to.equal(1);
                         })
                 })
-                describe("ton-link-v3 20% consensus tests", async () => {
+                describe("ton-link-v3-custom 20% consensus tests", async () => {
                         let validatorArray: string[] = [];
                         it("Create job", async () => {
                                 var link = beginCell()

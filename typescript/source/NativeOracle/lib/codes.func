@@ -1,0 +1,21 @@
+int op::transfer() asm "0xf8a7ea5 PUSHINT";
+int op::transfer_notification() asm "0x7362d09c PUSHINT";
+int op::internal_transfer() asm "0x178d4519 PUSHINT";
+int op::excesses() asm "0xd53276db PUSHINT";
+int op::burn() asm "0x595f07bc PUSHINT";
+int op::burn_notification() asm "0x7bdd97de PUSHINT";
+int op::mint() asm "21 PUSHINT";
+
+int query::reg::add() asm "40 PUSHINT";
+int query::job::create() asm "50 PUSHINT";
+
+int op::reg::unpause() asm "130 PUSHINT";
+int op::reg::pause() asm "140 PUSHINT";
+int op::reg::delete() asm "150 PUSHINT";
+int op::job::add() asm "160 PUSHINT";
+int op::reg::getStake() asm "170 PUSHINT";
+
+int op::admin::jw() asm "210 PUSHINT";
+int op::admin::jm() asm "220 PUSHINT";
+
+int op::test::add_6_p() asm "661 PUSHINT";
